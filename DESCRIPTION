@@ -1,0 +1,16 @@
+Package: eidith-cleaning-reports
+Version: 0.0.0.9000
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+ByteCompile: true
+URL: https://github.com/ecohealthalliancce/eidith
+Depends:
+    rmarkdown,
+    eidith,
+    tidyverse,
+    openxlsx,
+    future,
+    furrr
+Remotes:
+    ecohealthalliance/eidith,
