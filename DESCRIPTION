@@ -10,7 +10,6 @@ Depends:
     eidith,
     tidyverse,
     openxlsx,
-    future,
-    furrr
+    here
 Remotes:
     ecohealthalliance/eidith,
