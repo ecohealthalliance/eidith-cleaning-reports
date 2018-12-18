@@ -6,7 +6,7 @@ jobs:
       - image: rocker/verse:latest
     branches:
       only:
-        - master
+       - master
     steps:
       - checkout
       - restore_cache:
