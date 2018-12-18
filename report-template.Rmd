@@ -9,7 +9,8 @@ output:
     keep_md: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
+
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(openxlsx)
@@ -17,20 +18,51 @@ h <- here::here
 walk(list.files(h("R/"), full.names = TRUE),
      source, echo = FALSE, verbose = FALSE)
 country <- params$country
+
 ```
 
-```{r import-data, message= FALSE}
-# Run a check and summarize results
-animals <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz")) %>% 
+```{r event, message = FALSE}
+
+event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz")) %>%
   filter(Country == country)
 
-knitr::kable(count(animals, SpeciesScientificName))
+```
+
+```{r animal, message = FALSE}
+
+animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz")) %>% 
+  filter(Country == country)
+
+# Run a check and summarize results
+
+knitr::kable(count(animal, SpeciesScientificName))
+
 ```
 
 ```{r}
+
 # Use unique IDs to generate excel spreadsheets from raw data (eidith::ed2_get()),
 # use openxlsx (writeData, conditionalFormatting) to write and color rows of interest
 
 ```
 
+```{r write-xlsx-table, include = FALSE}
 
+# Which dataframes should be written out to the xlsx file?
+
+dfs.to.write <- list(
+  event, animal
+)
+
+# What should the names of the worksheet tabs be?
+
+names(dfs.to.write) <- c("Event", "Animal")
+
+# Write the xlsx workbook for the country in question
+
+write.xlsx(
+  x = dfs.to.write,
+  file = h("outputs", paste0(country, "-eidith-cleaning-workbook.xlsx"))
+)
+
+```

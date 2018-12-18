@@ -2,5 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.Rbuildignore
+*.DS_Store
 outputs
 to_deploy
