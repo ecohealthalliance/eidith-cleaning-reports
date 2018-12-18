@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set -e
-set -x
+set +x
 
 # Set git config information
 git config --global user.name "Noam Ross (Travis-CI)"
@@ -14,6 +14,7 @@ git clone -b outputs \
 
 # Change to the gh-page clone book-output directory
 cd to_deploy
+rm *.*
 
 # Copy generated output to the deploy directory
 cp -r ../outputs/* ./
@@ -21,4 +22,4 @@ cp -r ../outputs/* ./
 # Add all files to the repo
 git add *
 git commit  --no-verify -a -m "Auto-generated outputs (${CIRCLE_BUILD_NUM})" || true
-git push -q origin outputs
+git push -qf origin outputs
