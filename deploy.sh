@@ -21,4 +21,4 @@ cp -r ../outputs/* ./
 # Add all files to the repo
 git add *
 git commit  --no-verify -a -m "Auto-generated outputs (${CIRCLE_BUILD_NUM})" || true
-git push -q origin gh-pages
+git push -q origin outputs
