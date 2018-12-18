@@ -21,5 +21,5 @@ cp -r ../outputs/* ./
 
 # Add all files to the repo
 git add *
-git commit  --no-verify -a -m "Auto-generated outputs (${CIRCLE_BUILD_NUM})" || true
+git commit  --no-verify -a -m "Auto-generated outputs (${CIRCLE_BUILD_NUM}) [ci skip]" || true
 git push -qf origin outputs
