@@ -15,6 +15,7 @@ Depends:
     knitr,
     kableExtra,
     stringi,
-    lubridate
+    lubridate,
+    assertthat
 Remotes:
     ecohealthalliance/eidith,

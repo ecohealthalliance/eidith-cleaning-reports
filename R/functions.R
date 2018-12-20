@@ -84,3 +84,77 @@ get_event_mismatch <- function(dat){
   tibble(row = which(dat$event_name_check==FALSE), col = grep("EventName", names(dat)),
          flag = "EventName does not match EventDate or SiteName", fill = "orange")
 }
+
+# Generate a highlighted (formatted) XLSX workbook object
+# dfs = a list of dataframes to write to distinct worksheets of the xlsx workbook file
+# tab.names = a vector of desired names for the worksheet tabs
+# markup.dfs = a list of mark up dataframes that contain styling information for each dataframe;
+# should indicate the row and column positions of cells as well as the appropriate "fill" styling
+
+get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
+
+  # Check length of arguments
+
+  assertthat::assert_that(length(dfs) == length(tab.names))
+  assertthat::assert_that(length(tab.names) == length(markup.dfs))
+
+  # Create workbook, generate the worksheets, save the dataframes to the worksheets
+
+  wb <- createWorkbook()
+
+  sapply(1:length(dfs), function(x) addWorksheet(wb, sheetName = tab.names[x]))
+
+  sapply(1:length(dfs), function(x) writeDataTable(wb, sheet = tab.names[x], x = dfs[[x]]))
+
+  # Generate a style list containing style information for each worksheet
+
+  style.list <- vector("list", length(dfs))
+
+  names(style.list) <- tab.names
+
+  for(df in 1:length(dfs)) {
+
+    style.list[[df]] <- list(rep(NULL), length(markup.dfs[[df]]$fill))
+
+    style.list[[df]] <-
+
+      sapply(1:length(markup.dfs[[df]]$fill), function(x)
+
+        style.list[[df]][[x]] <- createStyle(fgFill = as.character(markup.dfs[[df]]$fill[x]))
+      )
+  }
+
+  # Generate a collated style list for the whole workbook
+
+  wb.list <- vector("list", 3)
+
+  names(wb.list) <- c("row", "col", "style")
+
+  for(df in 1:length(dfs)) {
+
+    wb.list[["row"]][[df]] <- markup.dfs[[df]]$row
+
+    wb.list[["col"]][[df]] <- markup.dfs[[df]]$col
+
+    wb.list[["style"]][[df]] <- style.list[[df]]
+  }
+
+  # Style the worksheets in the workbook
+
+  for(df in 1:length(dfs)) {
+
+    sapply(1:length(wb.list[["style"]][[df]]), function(x)
+
+      addStyle(wb,
+               sheet = tab.names[df],
+               style = wb.list[["style"]][[df]][[x]],
+               rows = wb.list[["row"]][[df]][[x]] + 1,
+               cols = wb.list[["col"]][[df]][[x]]
+      )
+    )
+  }
+
+  # Return workbook
+
+  return(wb)
+}
