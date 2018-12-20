@@ -15,6 +15,8 @@ knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(openxlsx)
 library(leaflet) 
+library(knitr)
+library(kableExtra)
 h <- here::here
 walk(list.files(h("R/"), full.names = TRUE),
      source, echo = FALSE, verbose = FALSE)
@@ -28,25 +30,41 @@ Event Table
 event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz")) %>%
   filter(Country == country)
 
-### for excel output
-highlight_cells <- bind_rows(get_na(event),
-                             get_solo_char(event), 
-                             get_outlier(event))
-
-#ID name vs. sample type.   (sample type, location, etc.)
-
-### for markdown report
-# map lat/lon
-map_points <- event %>% 
-  select(EventLongitude, EventLatitude, SiteName) %>%
-  distinct()
-
-leaflet() %>%
+# map locations
+leaflet(data = event) %>%
   addTiles() %>%
-  addMarkers(lng = map_points$EventLongitude, lat = map_points$EventLatitude, label = map_points$SiteName)
+  addMarkers(lng = ~EventLongitude, lat = ~EventLatitude, label = ~SiteName)
+
+# unique character values table
+event_char <- event %>% select_if(is.character) %>% select(-EventName, -SiteName)
+event_char_uniq <- apply(event_char, 2, unique)
+map_df(event_char_uniq, ~paste(.x, collapse = "; ")) %>%
+  mutate(EventDate = paste0("min = ", min(event$EventDate), "; max = ", max(event$EventDate))) %>%
+  select(Country, EventDate, everything()) %>%
+  t() %>%
+  kable() %>%
+  kable_styling()
 
 # skimr summary
-event %>% skimr::skim() %>% skimr::kable()
+#event %>% skimr::skim() %>% skimr::kable()
+
+# check for NAs
+na_index <- get_na(event, ignore_notes = TRUE)
+
+# check for solo chars
+solo_index <- get_solo_char(event)
+
+# check for numeric outliers (not including lat/long)
+outlier_index <- get_outlier(event)
+
+# check that EventName matches SiteName and EventDate
+event_index <- get_event_mismatch(event)
+
+### for excel output
+highlight_cells <- bind_rows(na_index,
+                             solo_index, 
+                             outlier_index,
+                             event_index)
 
 ```
 
@@ -80,7 +98,7 @@ dfs.to.write <- list(
 # What should the names of the worksheet tabs be?
 
 names(dfs.to.write) <- c("Event"#, "Animal"
-                         )
+)
 
 # Create workbook, generate the worksheets, save the dataframes to the worksheets
 
@@ -118,7 +136,7 @@ event.styles <- sapply(1:length(event.markup.df$fill), function(x)
   
   event.styles[[x]] <- 
     createStyle(fgFill = as.character(event.markup.df$fill[x]))
-  )
+)
 
 animal.styles <- list(rep(NULL, length(animal.markup.df$fill)))
 
@@ -126,7 +144,7 @@ animal.styles <- sapply(1:length(animal.markup.df$fill), function(x)
   
   animal.styles[[x]] <- 
     createStyle(fgFill = as.character(animal.markup.df$fill[x]))
-  )
+)
 
 # Generate a collated style list for the whole workbook
 
@@ -134,15 +152,15 @@ style.list <- list(
   row = list(
     event.markup.df$row, 
     animal.markup.df$row
-    ),
+  ),
   col = list(
     event.markup.df$col, 
     animal.markup.df$col
-    ),
+  ),
   style = list(
     event.styles, 
     animal.styles
-    )
+  )
 )
 
 # Style the worksheets

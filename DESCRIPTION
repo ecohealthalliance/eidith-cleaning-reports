@@ -12,6 +12,9 @@ Depends:
     openxlsx,
     here,
     leaflet,
-    skimr
+    knitr,
+    kableExtra,
+    stringi,
+    lubridate
 Remotes:
     ecohealthalliance/eidith,
