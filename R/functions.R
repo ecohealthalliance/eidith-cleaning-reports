@@ -13,14 +13,6 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
   invisible(files)
 }
 
-# get country name for retrieving map outline
-get_country_name <- function(country){
-  if(country=="Ivory Coast"){
-    country <- "Cote d'Ivoire"
-  }
-  return(country)
-}
-
 # indentify NA cells
 get_na <- function(dat){
   which(is.na(dat), arr.ind=TRUE) %>%

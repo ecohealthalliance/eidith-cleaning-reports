@@ -11,8 +11,7 @@ Depends:
     tidyverse,
     openxlsx,
     here,
-    raster,
-    sf,
+    leaflet,
     skimr
 Remotes:
     ecohealthalliance/eidith,

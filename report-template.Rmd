@@ -14,6 +14,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(openxlsx)
+library(leaflet) 
 h <- here::here
 walk(list.files(h("R/"), full.names = TRUE),
      source, echo = FALSE, verbose = FALSE)
@@ -35,21 +36,14 @@ highlight_cells <- bind_rows(get_na(event),
 #ID name vs. sample type.   (sample type, location, etc.)
 
 ### for markdown report
-
 # map lat/lon
-map_outline <- 
-  raster::getData("GADM", 
-                  country = get_country_name(country),
-                  level = 0) %>% 
-  sf::st_as_sf()
 map_points <- event %>% 
-  select(EventLongitude, EventLatitude) %>% 
-  sf::st_as_sf(coords = c("EventLongitude", "EventLatitude"))
-sf::st_crs(map_points) <- sf::st_crs(map_outline)
+  select(EventLongitude, EventLatitude, SiteName) %>%
+  distinct()
 
-ggplot() +
-  geom_sf(data =  map_outline, fill = NA) +
-  geom_sf(data =  map_points, color = "green")
+leaflet() %>%
+  addTiles() %>%
+  addMarkers(lng = map_points$EventLongitude, lat = map_points$EventLatitude, label = map_points$SiteName)
 
 # skimr summary
 event %>% skimr::skim() %>% skimr::kable()
@@ -173,17 +167,5 @@ saveWorkbook(
   file = h("outputs", paste0(country, "-eidith-cleaning-workbook.xlsx")),
   overwrite = TRUE
 )
-
-# wb <- createWorkbook()
-# sheet <- createSheet(wb, "Sheet1")
-# rows  <- createRow(sheet, rowIndex=1)    
-# cell.1 <- createCell(rows, colIndex=1)[[1,1]]     
-# setCellValue(cell.1, "Hello R!")
-# cellStyle1 <- CellStyle(wb) +
-#     Fill(backgroundColor="orange", foregroundColor="orange",
-#     pattern="SOLID_FOREGROUND") 
-# setCellStyle(cell.1, cellStyle1) 
-# # Then save the workbook 
-# saveWorkbook(wb, "filename.xlsx")
 
 ```
