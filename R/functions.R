@@ -25,7 +25,8 @@ get_country_name <- function(country){
 get_na <- function(dat){
   which(is.na(dat), arr.ind=TRUE) %>%
     as_tibble() %>%
-    mutate(flag = "NA")
+    mutate(flag = "NA",
+           fill = "red")
 }
 
 # identify solo unique values
@@ -41,7 +42,8 @@ get_solo_char <- function(dat){
         paste(collapse = "|")
       if(!solo_vals == ""){
         solo_vals_match <-  grepl(solo_vals,  col_dat)
-        which_solo <- tibble(row = which(solo_vals_match==TRUE), col = i, flag = "unique value")
+        which_solo <- tibble(row = which(solo_vals_match==TRUE), col = i,
+                             flag = "unique value", fill = "green")
         return(which_solo)
       }
     }
@@ -56,7 +58,8 @@ get_outlier <- function(dat){
       outlier <- boxplot.stats(col_dat, coef = 2.5)$out # x < (25th perc - coef * iqr) | x > (75th perc + coef * iqr)
       if(length(outlier)>0){
         outlier_match <-  col_dat  %in% outlier
-        which_outlier <- tibble(row = which(outlier_match==TRUE), col = i, flag = "numeric outlier")
+        which_outlier <- tibble(row = which(outlier_match==TRUE), col = i,
+                                flag = "numeric outlier", fill = "yellow")
         return(which_outlier)
       }
     }

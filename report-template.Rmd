@@ -23,6 +23,7 @@ country <- params$country
 
 Event Table
 ```{r event, message = FALSE, warning = FALSE}
+
 event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz")) %>%
   filter(Country == country)
 
@@ -36,8 +37,14 @@ highlight_cells <- bind_rows(get_na(event),
 ### for markdown report
 
 # map lat/lon
-map_outline <- raster::getData("GADM", country = get_country_name(country), level=0) %>% sf::st_as_sf()
-map_points <- event %>% select(EventLongitude, EventLatitude) %>% sf::st_as_sf(coords = c("EventLongitude", "EventLatitude"))
+map_outline <- 
+  raster::getData("GADM", 
+                  country = get_country_name(country),
+                  level = 0) %>% 
+  sf::st_as_sf()
+map_points <- event %>% 
+  select(EventLongitude, EventLatitude) %>% 
+  sf::st_as_sf(coords = c("EventLongitude", "EventLatitude"))
 sf::st_crs(map_points) <- sf::st_crs(map_outline)
 
 ggplot() +
@@ -69,6 +76,7 @@ event %>% skimr::skim() %>% skimr::kable()
 
 ```{r write-xlsx-table, include = FALSE}
 
+
 # Which dataframes should be written out to the xlsx file?
 
 dfs.to.write <- list(
@@ -80,11 +88,90 @@ dfs.to.write <- list(
 names(dfs.to.write) <- c("Event"#, "Animal"
                          )
 
+# Create workbook, generate the worksheets, save the dataframes to the worksheets
+
+wb <- createWorkbook()
+
+sapply(1:length(dfs.to.write), function(x)
+  addWorksheet(wb, sheetName = names(dfs.to.write)[x]))
+
+sapply(1:length(dfs.to.write), function(x)
+  writeDataTable(wb, sheet = names(dfs.to.write)[x], x = dfs.to.write[[x]]))
+
+
+# Pull in mark up dataframes for each table that indicate the row and column
+# positions of cells as well as the appropriate "fill" styling
+
+event.markup.df <- data.frame(
+  row = c(1:5),
+  col = c(1:5),
+  fill = c("yellow", "red", "blue", "gray", "green")
+)
+
+event.markup.df <- highlight_cells
+
+animal.markup.df <- data.frame(
+  row = c(6:10),
+  col = c(6:10),
+  fill = c("orange", "blue", "blue", "red", "red")
+)
+
+# Generate style lists for each worksheet
+
+event.styles <- list(rep(NULL, length(event.markup.df$fill)))
+
+event.styles <- sapply(1:length(event.markup.df$fill), function(x)
+  
+  event.styles[[x]] <- 
+    createStyle(fgFill = as.character(event.markup.df$fill[x]))
+  )
+
+animal.styles <- list(rep(NULL, length(animal.markup.df$fill)))
+
+animal.styles <- sapply(1:length(animal.markup.df$fill), function(x)
+  
+  animal.styles[[x]] <- 
+    createStyle(fgFill = as.character(animal.markup.df$fill[x]))
+  )
+
+# Generate a collated style list for the whole workbook
+
+style.list <- list(
+  row = list(
+    event.markup.df$row, 
+    animal.markup.df$row
+    ),
+  col = list(
+    event.markup.df$col, 
+    animal.markup.df$col
+    ),
+  style = list(
+    event.styles, 
+    animal.styles
+    )
+)
+
+# Style the worksheets
+
+for(x in 1:length(dfs.to.write)) {
+  
+  sapply(1:length(style.list[["style"]][[x]]), function(y)
+    addStyle(wb,
+             sheet = names(dfs.to.write)[x],
+             style = style.list[["style"]][[x]][[y]],
+             rows = style.list[["row"]][[x]][[y]] + 1,
+             cols = style.list[["col"]][[x]][[y]]
+    )
+  )
+}
+
+
 # Write the xlsx workbook for the country in question
 
-write.xlsx(
-  x = dfs.to.write,
-  file = h("outputs", paste0(country, "-eidith-cleaning-workbook.xlsx"))
+saveWorkbook(
+  wb,
+  file = h("outputs", paste0(country, "-eidith-cleaning-workbook.xlsx")),
+  overwrite = TRUE
 )
 
 # wb <- createWorkbook()
@@ -98,6 +185,5 @@ write.xlsx(
 # setCellStyle(cell.1, cellStyle1) 
 # # Then save the workbook 
 # saveWorkbook(wb, "filename.xlsx")
-
 
 ```
