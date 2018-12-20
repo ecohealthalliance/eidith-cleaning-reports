@@ -10,6 +10,9 @@ Depends:
     eidith,
     tidyverse,
     openxlsx,
-    here
+    here,
+    raster,
+    sf,
+    skimr
 Remotes:
     ecohealthalliance/eidith,
