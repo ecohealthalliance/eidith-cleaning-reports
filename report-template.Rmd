@@ -21,21 +21,42 @@ country <- params$country
 
 ```
 
-```{r event, message = FALSE}
-
+Event Table
+```{r event, message = FALSE, warning = FALSE}
 event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz")) %>%
   filter(Country == country)
+
+### for excel output
+highlight_cells <- bind_rows(get_na(event),
+                             get_solo_char(event), 
+                             get_outlier(event))
+
+#ID name vs. sample type.   (sample type, location, etc.)
+
+### for markdown report
+
+# map lat/lon
+map_outline <- raster::getData("GADM", country = get_country_name(country), level=0) %>% sf::st_as_sf()
+map_points <- event %>% select(EventLongitude, EventLatitude) %>% sf::st_as_sf(coords = c("EventLongitude", "EventLatitude"))
+sf::st_crs(map_points) <- sf::st_crs(map_outline)
+
+ggplot() +
+  geom_sf(data =  map_outline, fill = NA) +
+  geom_sf(data =  map_points, color = "green")
+
+# skimr summary
+event %>% skimr::skim() %>% skimr::kable()
 
 ```
 
 ```{r animal, message = FALSE}
 
-animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz")) %>% 
-  filter(Country == country)
-
-# Run a check and summarize results
-
-knitr::kable(count(animal, SpeciesScientificName))
+# animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz")) %>%
+#   filter(Country == country)
+# 
+# # Run a check and summarize results
+# 
+# knitr::kable(count(animal, SpeciesScientificName))
 
 ```
 
@@ -51,12 +72,13 @@ knitr::kable(count(animal, SpeciesScientificName))
 # Which dataframes should be written out to the xlsx file?
 
 dfs.to.write <- list(
-  event, animal
+  event#, animal
 )
 
 # What should the names of the worksheet tabs be?
 
-names(dfs.to.write) <- c("Event", "Animal")
+names(dfs.to.write) <- c("Event"#, "Animal"
+                         )
 
 # Write the xlsx workbook for the country in question
 
@@ -64,5 +86,18 @@ write.xlsx(
   x = dfs.to.write,
   file = h("outputs", paste0(country, "-eidith-cleaning-workbook.xlsx"))
 )
+
+# wb <- createWorkbook()
+# sheet <- createSheet(wb, "Sheet1")
+# rows  <- createRow(sheet, rowIndex=1)    
+# cell.1 <- createCell(rows, colIndex=1)[[1,1]]     
+# setCellValue(cell.1, "Hello R!")
+# cellStyle1 <- CellStyle(wb) +
+#     Fill(backgroundColor="orange", foregroundColor="orange",
+#     pattern="SOLID_FOREGROUND") 
+# setCellStyle(cell.1, cellStyle1) 
+# # Then save the workbook 
+# saveWorkbook(wb, "filename.xlsx")
+
 
 ```
