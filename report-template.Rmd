@@ -10,7 +10,6 @@ output:
 ---
 
 ```{r setup, include = FALSE}
-
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(openxlsx)
@@ -24,19 +23,21 @@ country <- params$country
 
 ```
 
-Event Table
+## Event Table
 ```{r event, message = FALSE, warning = FALSE}
 
-event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz")) %>%
-  filter(Country == country)
+event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz"),  col_types = event_specs) %>%
+  filter(Country == country) 
 
-# map locations
+## for report-------
+
+# map site locations 
 leaflet(data = event) %>%
   addTiles() %>%
-  addMarkers(lng = ~EventLongitude, lat = ~EventLatitude, label = ~SiteName)
+  addMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, label = ~SiteName)
 
 # unique character values table
-event_char <- event %>% select_if(is.character) %>% select(-EventName, -SiteName)
+event_char <- event %>% select_if(is.character) %>% select(-EventName, -SiteName, -CommunityEngagementNotes, -Notes)
 event_char_uniq <- apply(event_char, 2, unique)
 map_df(event_char_uniq, ~paste(.x, collapse = "; ")) %>%
   mutate(EventDate = paste0("min = ", min(event$EventDate), "; max = ", max(event$EventDate))) %>%
@@ -47,6 +48,8 @@ map_df(event_char_uniq, ~paste(.x, collapse = "; ")) %>%
 
 # skimr summary
 #event %>% skimr::skim() %>% skimr::kable()
+
+## for excel-------
 
 # check for NAs
 na_index <- get_na(event, ignore_notes = TRUE)
@@ -60,6 +63,8 @@ outlier_index <- get_outlier(event)
 # check that EventName matches SiteName and EventDate
 event_index <- get_event_mismatch(event)
 
+# check ID dups - to add
+
 # for excel output
 event.markup <- bind_rows(na_index,
                           solo_index, 
@@ -67,24 +72,37 @@ event.markup <- bind_rows(na_index,
                           event_index)
 
 ```
-
+## Animal Table
 ```{r animal, message = FALSE, warning = FALSE}
 
-animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz")) %>%
+animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz"), col_types = animal_specs) %>%
   filter(Country == country)
+
+## for report-------
+
+# unique character values table
+animal_char <- animal %>% select_if(is.character) %>% select(-Notes, -SiteName, -AnimalID, -EventName, -matches("Class|Order|Family|Genus|Species"))
+animal_char_uniq <- apply(animal_char, 2, unique)
+map_df(animal_char_uniq, ~paste(.x, collapse = "; ")) %>%
+  t() %>%
+  kable() %>%
+  kable_styling()
+
+## for excel-------
 
 # check for solo chars
 solo_index <- get_solo_char(animal)
 
+# check for numeric outliers (not including lat/long)
+outlier_index <- get_outlier(animal)
+
+# check ID dups - to add
+
+# check range vs species - to add
+
 # for excel output
-animal.markup <- bind_rows(solo_index)
-
-```
-
-```{r}
-
-# Use unique IDs to generate excel spreadsheets from raw data (eidith::ed2_get()),
-# use openxlsx (writeData, conditionalFormatting) to write and color rows of interest
+animal.markup <- bind_rows(solo_index,
+                           outlier_index)
 
 ```
 

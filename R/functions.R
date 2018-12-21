@@ -15,15 +15,18 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
 
 # indentify NA cells
 get_na <- function(dat, ignore_notes = TRUE){
+
   out = which(is.na(dat), arr.ind=TRUE) %>%
     as_tibble() %>%
     mutate(flag = "NA",
            fill = "red")
+
   if(ignore_notes){
     col_names <- names(dat)[unique(out$col)]
     col_names <- col_names[!grepl("notes", col_names, ignore.case = TRUE)]
     out <- filter(out, col %in%  which(names(dat) %in% col_names))
   }
+
   return(out)
 }
 
@@ -46,8 +49,7 @@ get_solo_char <- function(dat) {
 
       if(!(length(solo_vals) == 1 & solo_vals[1] == "")) {
 
-        solo_vals_match <- sapply(seq_along(col_dat), function(x)
-          col_dat[x] %in% solo_vals)
+        solo_vals_match <- col_dat %in% solo_vals
 
         which_solo <- tibble(row = which(solo_vals_match == TRUE), col = i,
                              flag = "unique value", fill = "green")
@@ -60,14 +62,19 @@ get_solo_char <- function(dat) {
 
 # numeric identify outliers
 get_outlier <- function(dat){
+
   map_df(seq_along(dat), function(i){
+
     col_dat <- dat %>% pull(i)
+
     if(class(col_dat) == "numeric" &
        !all(is.na(col_dat)) &
        !grepl("Latitude|Longitude", colnames(dat[,i]), ignore.case = TRUE) ){
+
       outlier <- boxplot.stats(col_dat, coef = 2.5)$out # x < (25th perc - coef * iqr) | x > (75th perc + coef * iqr)
+
       if(length(outlier)>0){
-        outlier_match <-  col_dat  %in% outlier
+        outlier_match <-  col_dat %in% outlier
         which_outlier <- tibble(row = which(outlier_match==TRUE), col = i,
                                 flag = "numeric outlier", fill = "yellow")
         return(which_outlier)
