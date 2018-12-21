@@ -25,34 +25,13 @@ country <- params$country
 
 ## Event Table
 ```{r event, message = FALSE, warning = FALSE}
-
 event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz"),  col_types = event_specs) %>%
   filter(Country == country) 
-
-## for report-------
-
-# map site locations 
-leaflet(data = event) %>%
-  addTiles() %>%
-  addMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, label = ~SiteName)
-
-# unique character values table
-event_char <- event %>% select_if(is.character) %>% select(-EventName, -SiteName, -CommunityEngagementNotes, -Notes)
-event_char_uniq <- apply(event_char, 2, unique)
-map_df(event_char_uniq, ~paste(.x, collapse = "; ")) %>%
-  mutate(EventDate = paste0("min = ", min(event$EventDate), "; max = ", max(event$EventDate))) %>%
-  select(Country, EventDate, everything()) %>%
-  t() %>%
-  kable() %>%
-  kable_styling()
-
-# skimr summary
-#event %>% skimr::skim() %>% skimr::kable()
 
 ## for excel-------
 
 # check for NAs
-na_index <- get_na(event, ignore_notes = TRUE)
+na_index <- get_na(event, cols_to_ignore = c("Notes"))
 
 # check for solo chars
 solo_index <- get_solo_char(event)
@@ -63,32 +42,46 @@ outlier_index <- get_outlier(event)
 # check that EventName matches SiteName and EventDate
 event_index <- get_event_mismatch(event)
 
-# check ID dups - to add
+# check ID dups 
+dup_id_index <- get_dups(event, "EventName")
 
 # for excel output
 event.markup <- bind_rows(na_index,
                           solo_index, 
                           outlier_index,
-                          event_index)
+                          event_index,
+                          dup_id_index)
+```
+
+```{r event-map, message = FALSE, warning = FALSE}
+# map site locations 
+leaflet(data = event) %>%
+  addTiles() %>%
+  addMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, label = ~SiteName)
 
 ```
+
+<details>
+<summary>Unique Value Check</summary>
+```{r event-unique, message = FALSE, warning = FALSE}
+# unique character values table
+create_unique_table(event,
+                    cols_to_ignore = c("EventName", "SiteName", "Notes"),
+                    date_col = "EventDate")
+
+```
+</details>
+
 ## Animal Table
 ```{r animal, message = FALSE, warning = FALSE}
 
 animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz"), col_types = animal_specs) %>%
   filter(Country == country)
 
-## for report-------
-
-# unique character values table
-animal_char <- animal %>% select_if(is.character) %>% select(-Notes, -SiteName, -AnimalID, -EventName, -matches("Class|Order|Family|Genus|Species"))
-animal_char_uniq <- apply(animal_char, 2, unique)
-map_df(animal_char_uniq, ~paste(.x, collapse = "; ")) %>%
-  t() %>%
-  kable() %>%
-  kable_styling()
-
 ## for excel-------
+
+# check for NAs
+na_index <- get_na(animal, cols_to_ignore = c("Notes", "Bat", "NHP", "Rodent", "Taxa|Class|Order|Family|Genus|Species"))
 
 # check for solo chars
 solo_index <- get_solo_char(animal)
@@ -96,15 +89,44 @@ solo_index <- get_solo_char(animal)
 # check for numeric outliers (not including lat/long)
 outlier_index <- get_outlier(animal)
 
-# check ID dups - to add
-
-# check range vs species - to add
+# check ID dups 
+dup_id_index <- get_dups(animal, "AnimalID")
 
 # for excel output
-animal.markup <- bind_rows(solo_index,
-                           outlier_index)
+animal.markup <- bind_rows(
+                           # na_index, ### too slow :(
+                           solo_index,
+                           outlier_index,
+                           dup_id_index)
 
 ```
+
+<details>
+<summary>Animal Measurements</summary>
+```{r animal-measurements, message = FALSE, warning = FALSE}
+# summarize ranges
+animal %>%
+  select(SpeciesScientificName, matches("Bat|NHP|Rodent")) %>%
+  gather(key = "Variable", value = "value", -SpeciesScientificName) %>%
+  na.omit() %>%
+  group_by(Variable, SpeciesScientificName) %>%
+  summarize(Range = paste(min(value), max(value), sep = " - "),
+            Count = n()) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+</details>
+
+
+<details>
+<summary>Unique Value Check</summary>
+```{r animal-unique, message = FALSE, warning = FALSE}
+# unique character values table
+create_unique_table(animal,
+                    cols_to_ignore = c("Notes", "SiteName", "AnimalID", "EventName", "Taxa|Class|Order|Family|Genus|Species"), 
+                    date_col = "SampleDate")
+```
+</details>
 
 ```{r write-xlsx-table, include = FALSE}
 

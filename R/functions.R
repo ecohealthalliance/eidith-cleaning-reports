@@ -13,36 +13,79 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
   invisible(files)
 }
 
-# indentify NA cells
-get_na <- function(dat, ignore_notes = TRUE){
+# create unique character values table
+create_unique_table <- function(dat, cols_to_ignore = c(), date_col = ""){
 
-  out = which(is.na(dat), arr.ind=TRUE) %>%
+  # select character data only
+  dat_char <- dat %>% select_if(is.character)
+
+  # ignore specified columns (regex matching)
+  cols_to_ignore_regex <- paste(cols_to_ignore, collapse = "|")
+
+  if(!is.null(cols_to_ignore)){dat_char <- dat_char %>% select(-matches(!!cols_to_ignore_regex))}
+
+  # summarize unique values
+  dat_char_uniq <- apply(dat_char, 2, unique) %>%
+    map_df(~paste(.x, collapse = "; "))
+
+  # add special case for date range
+  if(date_col != ""){
+    dat_char_uniq <- dat_char_uniq %>%
+      mutate(!!date_col := paste0(min(dat %>% pull(!!date_col)), " to ", max(dat %>% pull(!!date_col)))) %>%
+      select(Country, !!date_col, everything())
+  }
+
+  # final formatting
+  dat_char_uniq <- dat_char_uniq %>%
+    t() %>%
+    kable() %>%
+    kable_styling()
+
+  return(dat_char_uniq)
+}
+
+# identify NA cells
+get_na <- function(dat, cols_to_ignore = c()){
+
+  # ID all NAs
+  which_na = which(is.na(dat), arr.ind=TRUE) %>%
     as_tibble() %>%
     mutate(flag = "NA",
            fill = "red")
 
-  if(ignore_notes){
-    col_names <- names(dat)[unique(out$col)]
-    col_names <- col_names[!grepl("notes", col_names, ignore.case = TRUE)]
-    out <- filter(out, col %in%  which(names(dat) %in% col_names))
+  # ignore columns that are 100% NA
+  all_na <- which(apply(dat, 2, function(x){all(is.na(x))}))
+  which_na <- which_na %>% filter(!col %in% all_na)
+
+  # ignore other specified columns (regex matching)
+  cols_to_ignore_regex <- paste(cols_to_ignore, collapse = "|")
+
+  if(!is.null(cols_to_ignore)){
+    col_names <- names(dat)[unique(which_na$col)]
+    ignore_names <- col_names[grepl(cols_to_ignore_regex, col_names, ignore.case = TRUE)]
+    which_na <- which_na %>% filter(!col %in% which(names(dat) %in% ignore_names))
   }
 
-  return(out)
+  return(which_na)
 }
 
-# Identify solo unique values
+# identify solo unique values
 get_solo_char <- function(dat) {
 
+  # for every column...
   map_df(seq_along(dat), function(i) {
 
     col_dat <- dat %>% pull(i)
 
+    # if these criteria are met...
     if(class(col_dat) == "character" &
        !all(is.na(col_dat)) &
        !grepl("Notes|EventName|AnimalID", colnames(dat[,i]), ignore.case = TRUE)) {
 
+      # summarize count by unique character string
       col_tbl <- table(col_dat) %>% as_tibble()
 
+      # select character strings that occur only once
       solo_vals <- col_tbl %>%
         filter(n==1) %>%
         pull(col_dat)
@@ -55,7 +98,7 @@ get_solo_char <- function(dat) {
                              flag = "unique value", fill = "green")
 
         return(which_solo)
-        }
+      }
     }
   })
 }
@@ -63,14 +106,17 @@ get_solo_char <- function(dat) {
 # numeric identify outliers
 get_outlier <- function(dat){
 
+  # for every column...
   map_df(seq_along(dat), function(i){
 
     col_dat <- dat %>% pull(i)
 
+    # if these criteria are met...
     if(class(col_dat) == "numeric" &
        !all(is.na(col_dat)) &
        !grepl("Latitude|Longitude", colnames(dat[,i]), ignore.case = TRUE) ){
 
+      # identify outliers
       outlier <- boxplot.stats(col_dat, coef = 2.5)$out # x < (25th perc - coef * iqr) | x > (75th perc + coef * iqr)
 
       if(length(outlier)>0){
@@ -88,7 +134,9 @@ library(stringi)
 library(lubridate)
 
 get_event_mismatch <- function(dat){
-  dat <- dat %>%
+
+  # compare year, month, day, sitename
+  which_mismatch <- dat %>%
     mutate(year_check = as.character(year(EventDate)) == str_sub(EventName,-9,-6),
            month_check = as.character(month(EventDate)) == match(str_sub(EventName,-5,-3), month.abb),
            day_check = str_pad(day(EventDate), width = 2, side = "left", pad = "0") == str_sub(EventName,-2,-1),
@@ -96,8 +144,21 @@ get_event_mismatch <- function(dat){
     rowwise() %>%
     mutate(event_name_check = all(year_check, month_check, day_check, site_name_check))
 
-  tibble(row = which(dat$event_name_check==FALSE), col = grep("EventName", names(dat)),
+  # output mismatches
+  tibble(row = which(which_mismatch$event_name_check==FALSE), col = grep("EventName", names(dat)),
          flag = "EventName does not match EventDate or SiteName", fill = "orange")
+}
+
+# identify duplicates
+get_dups <- function(dat, col_name){
+
+  which_dup <- dat %>%
+    select(!!col_name) %>%
+    mutate(is_dup = duplicated(!!col_name)|duplicated(!!col_name, fromLast = TRUE))
+
+  tibble(row = which(which_dup$is_dup==TRUE), col = grep(col_name, names(dat)),
+         flag = "duplicate identifier", fill = "purple")
+
 }
 
 # Generate a highlighted (formatted) XLSX workbook object
