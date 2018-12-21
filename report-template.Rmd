@@ -60,22 +60,24 @@ outlier_index <- get_outlier(event)
 # check that EventName matches SiteName and EventDate
 event_index <- get_event_mismatch(event)
 
-### for excel output
-highlight_cells <- bind_rows(na_index,
-                             solo_index, 
-                             outlier_index,
-                             event_index)
+# for excel output
+event.markup <- bind_rows(na_index,
+                          solo_index, 
+                          outlier_index,
+                          event_index)
 
 ```
 
-```{r animal, message = FALSE}
+```{r animal, message = FALSE, warning = FALSE}
 
-# animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz")) %>%
-#   filter(Country == country)
-# 
-# # Run a check and summarize results
-# 
-# knitr::kable(count(animal, SpeciesScientificName))
+animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz")) %>%
+  filter(Country == country)
+
+# check for solo chars
+solo_index <- get_solo_char(animal)
+
+# for excel output
+animal.markup <- bind_rows(solo_index)
 
 ```
 
@@ -88,18 +90,14 @@ highlight_cells <- bind_rows(na_index,
 
 ```{r write-xlsx-table, include = FALSE}
 
-
 # Get highlighted workbook object
-
 wb <- get_highlighted_wb(
-  dfs = list(event),
-  tab.names = c("Event"),
-  markup.dfs = list(highlight_cells)
+  dfs = list(event, animal),
+  tab.names = c("Event", "Animal"),
+  markup.dfs = list(event.markup, animal.markup)
 )
 
-
 # Write the xlsx workbook for the country in question
-
 saveWorkbook(
   wb,
   file = h("outputs", paste0(country, "-eidith-cleaning-workbook.xlsx")),

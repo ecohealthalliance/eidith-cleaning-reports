@@ -1,8 +1,12 @@
 #!/usr/bin/env Rscript
 h <- here::here
 
-countries <- unique(readr::read_tsv(h("raw-eidith-data", "Event.tsv.gz"),
-                      col_types = readr::cols_only(Country = readr::col_character()))$Country)
+countries <- sort(
+  unique(
+    readr::read_tsv(h("raw-eidith-data", "Event.tsv.gz"),
+                    col_types = readr::cols_only(Country = readr::col_character()))$Country
+  )
+)
 
 for (country in countries) {
   rmarkdown::render("report-template.Rmd",

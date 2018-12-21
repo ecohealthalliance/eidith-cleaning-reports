@@ -27,25 +27,33 @@ get_na <- function(dat, ignore_notes = TRUE){
   return(out)
 }
 
-# identify solo unique values
-get_solo_char <- function(dat){
-  map_df(seq_along(dat), function(i){
+# Identify solo unique values
+get_solo_char <- function(dat) {
+
+  map_df(seq_along(dat), function(i) {
+
     col_dat <- dat %>% pull(i)
+
     if(class(col_dat) == "character" &
        !all(is.na(col_dat)) &
-       !grepl("Notes|EventName", colnames(dat[,i]), ignore.case = TRUE)){
+       !grepl("Notes|EventName|AnimalID", colnames(dat[,i]), ignore.case = TRUE)) {
+
       col_tbl <- table(col_dat) %>% as_tibble()
+
       solo_vals <- col_tbl %>%
         filter(n==1) %>%
-        mutate(col_dat = paste0("^", col_dat, "$")) %>%
-        pull(col_dat) %>%
-        paste(collapse = "|")
-      if(!solo_vals == ""){
-        solo_vals_match <-  grepl(solo_vals,  col_dat)
-        which_solo <- tibble(row = which(solo_vals_match==TRUE), col = i,
+        pull(col_dat)
+
+      if(!(length(solo_vals) == 1 & solo_vals[1] == "")) {
+
+        solo_vals_match <- sapply(seq_along(col_dat), function(x)
+          col_dat[x] %in% solo_vals)
+
+        which_solo <- tibble(row = which(solo_vals_match == TRUE), col = i,
                              flag = "unique value", fill = "green")
+
         return(which_solo)
-      }
+        }
     }
   })
 }
@@ -102,9 +110,9 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   wb <- createWorkbook()
 
-  sapply(1:length(dfs), function(x) addWorksheet(wb, sheetName = tab.names[x]))
+  sapply(seq_along(dfs), function(x) addWorksheet(wb, sheetName = tab.names[x]))
 
-  sapply(1:length(dfs), function(x) writeDataTable(wb, sheet = tab.names[x], x = dfs[[x]]))
+  sapply(seq_along(dfs), function(x) writeDataTable(wb, sheet = tab.names[x], x = dfs[[x]]))
 
   # Generate a style list containing style information for each worksheet
 
@@ -112,7 +120,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   names(style.list) <- tab.names
 
-  for(df in 1:length(dfs)) {
+  for(df in seq_along(dfs)) {
 
     style.list[[df]] <- list(rep(NULL), length(markup.dfs[[df]]$fill))
 
@@ -130,7 +138,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   names(wb.list) <- c("row", "col", "style")
 
-  for(df in 1:length(dfs)) {
+  for(df in seq_along(dfs)) {
 
     wb.list[["row"]][[df]] <- markup.dfs[[df]]$row
 
@@ -141,7 +149,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   # Style the worksheets in the workbook
 
-  for(df in 1:length(dfs)) {
+  for(df in seq_along(dfs)) {
 
     sapply(1:length(wb.list[["style"]][[df]]), function(x)
 
