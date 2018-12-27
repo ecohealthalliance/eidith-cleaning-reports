@@ -174,6 +174,35 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
   assertthat::assert_that(length(dfs) == length(tab.names))
   assertthat::assert_that(length(tab.names) == length(markup.dfs))
 
+  # Add a "cleaning_flags" field to all dataframes for ease of interpreation
+
+  for(df in seq_along(dfs)) {
+
+    # Increment the "col" field in the markup dataframe by 1 since the new "cleaning_flag"
+    # column will be first in the final exported data, throwing everything off by 1
+
+    markup.dfs[[df]]$col <- markup.dfs[[df]]$col + 1
+
+    # Generate flag values for each relevant row of the dataframe and add these to the
+    # data as a "cleaning_flags" column
+
+    flag.table <- markup.dfs[[df]] %>%
+      arrange(row, col) %>%
+      mutate(flag_mod = paste0(flag, " (", col, ")")) %>%
+      group_by(row) %>%
+      summarize(row_flag = paste(flag_mod, collapse = "; "))
+
+    original.cols <- colnames(dfs[[df]])
+
+    dfs[[df]]$cleaning_flags <-
+      sapply(1:nrow(dfs[[df]]), function(x)
+        ifelse(sum(flag.table$row == x) == 1, flag.table[flag.table$row == x, 2], "")
+      ) %>%
+      unlist()
+
+    dfs[[df]] <- select(dfs[[df]], cleaning_flags, original.cols)
+  }
+
   # Create workbook, generate the worksheets, save the dataframes to the worksheets
 
   wb <- createWorkbook()
