@@ -9,7 +9,7 @@ output:
     keep_md: true
 ---
 
-```{r setup, include = FALSE}
+```{r setup, include = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(openxlsx)
@@ -24,7 +24,7 @@ country <- params$country
 ```
 
 ## Event Table
-```{r event, message = FALSE, warning = FALSE}
+```{r event}
 event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz"),  col_types = event_specs) %>%
   filter(Country == country) 
 
@@ -53,7 +53,8 @@ event.markup <- bind_rows(na_index,
                           dup_id_index)
 ```
 
-```{r event-map, message = FALSE, warning = FALSE}
+Site Locations
+```{r event-site-map}
 # map site locations 
 leaflet(data = event) %>%
   addTiles() %>%
@@ -63,17 +64,14 @@ leaflet(data = event) %>%
 
 <details>
 <summary>Unique Value Check</summary>
-```{r event-unique, message = FALSE, warning = FALSE}
-# unique character values table
-create_unique_table(event,
-                    cols_to_ignore = c("EventName", "SiteName", "Notes"),
-                    date_col = "EventDate")
+```{r event-unique}
+create_unique_table(event, cols_to_ignore = c("EventName", "SiteName", "Notes"))
 
 ```
 </details>
 
 ## Animal Table
-```{r animal, message = FALSE, warning = FALSE}
+```{r animal}
 
 animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz"), col_types = animal_specs) %>%
   filter(Country == country)
@@ -102,29 +100,11 @@ animal.markup <- bind_rows(
 ```
 
 <details>
-<summary>Animal Measurements</summary>
-```{r animal-measurements, message = FALSE, warning = FALSE}
-# summarize ranges
-animal %>%
-  select(SpeciesScientificName, matches("Bat|NHP|Rodent")) %>%
-  gather(key = "Variable", value = "value", -SpeciesScientificName) %>%
-  na.omit() %>%
-  group_by(Variable, SpeciesScientificName) %>%
-  summarize(Range = paste(min(value), max(value), sep = " - "),
-            Count = n()) %>%
-  kable() %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
-```
-</details>
-
-
-<details>
 <summary>Unique Value Check</summary>
-```{r animal-unique, message = FALSE, warning = FALSE}
+```{r animal-unique}
 # unique character values table
 create_unique_table(animal,
-                    cols_to_ignore = c("Notes", "SiteName", "AnimalID", "EventName", "Taxa|Class|Order|Family|Genus|Species"), 
-                    date_col = "SampleDate")
+                    cols_to_ignore = c("Notes", "SiteName", "AnimalID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
 ```
 </details>
 

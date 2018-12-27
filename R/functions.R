@@ -13,35 +13,50 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
   invisible(files)
 }
 
-# create unique character values table
-create_unique_table <- function(dat, cols_to_ignore = c(), date_col = ""){
-
-  # select character data only
-  dat_char <- dat %>% select_if(is.character)
+# create unique values table
+create_unique_table <- function(dat, cols_to_ignore = c()){
 
   # ignore specified columns (regex matching)
-  cols_to_ignore_regex <- paste(cols_to_ignore, collapse = "|")
+  cols_to_ignore_regex <- paste(c(cols_to_ignore, "Latitude", "Longitude"), collapse = "|")
 
-  if(!is.null(cols_to_ignore)){dat_char <- dat_char %>% select(-matches(!!cols_to_ignore_regex))}
+  dat <- dat %>% select(-matches(!!cols_to_ignore_regex))
 
-  # summarize unique values
-  dat_char_uniq <- apply(dat_char, 2, unique) %>%
-    map_df(~paste(.x, collapse = "; "))
+  # character data
+  dat_char <- dat %>%
+    select_if(is.character) %>%
+    gather() %>%
+    na.omit() %>%
+    group_by(key) %>%
+    summarize(values = paste(unique(value), collapse = "; "), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
 
-  # add special case for date range
-  if(date_col != ""){
-    dat_char_uniq <- dat_char_uniq %>%
-      mutate(!!date_col := paste0(min(dat %>% pull(!!date_col)), " to ", max(dat %>% pull(!!date_col)))) %>%
-      select(Country, !!date_col, everything())
-  }
+  # numeric data
+  dat_num <- dat %>%
+    select_if(is.numeric) %>%
+    gather() %>%
+    na.omit() %>%
+    group_by(key) %>%
+    summarize(values = paste(min(value), max(value), sep = "-"), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
 
-  # final formatting
-  dat_char_uniq <- dat_char_uniq %>%
-    t() %>%
+  # date data
+  dat_date <- dat %>%
+    select_if(is.Date) %>%
+    gather() %>%
+    na.omit() %>%
+    group_by(key) %>%
+    summarize(values = paste(min(value), max(value), sep = " to "), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+
+  # all na
+  dat_na_names <- dat %>%
+    select_if(function(x) all(is.na(x))) %>%
+    colnames()
+  dat_na <- tibble(key = dat_na_names, values = "all NA", count_missing = paste(nrow(dat), nrow(dat), sep = "/"))
+
+  # together
+  bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
+    arrange(factor(key, levels = colnames(dat))) %>%
+    rename(field = key) %>%
     kable() %>%
     kable_styling()
-
-  return(dat_char_uniq)
 }
 
 # identify NA cells
