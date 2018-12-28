@@ -12,6 +12,7 @@ output:
 ```{r setup, include = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
+library(lubridate)
 library(openxlsx)
 library(leaflet) 
 library(knitr)
@@ -92,10 +93,10 @@ dup_id_index <- get_dups(animal, "AnimalID")
 
 # for excel output
 animal.markup <- bind_rows(
-                           # na_index, ### too slow :(
-                           solo_index,
-                           outlier_index,
-                           dup_id_index)
+  # na_index, ### too slow :(
+  solo_index,
+  outlier_index,
+  dup_id_index)
 
 ```
 
@@ -112,10 +113,7 @@ create_unique_table(animal,
 ```{r specimen}
 
 specimen <- read_tsv(h("raw-eidith-data", "Specimen.tsv.gz"), col_types = specimen_specs) %>%
-  filter(Country == country) %>%
-  select(-`TimeOfSpecimenCollection (humans only)`) # to revisit--having trouble getting into correct format
-
-#class(specimen$`TimeOfSpecimenCollection (humans only)`) <- "hms"
+  filter(Country == country) 
 
 ## for excel-------
 
@@ -134,11 +132,11 @@ dup_id_index2 <- get_dups(specimen, "SpecimenID")
 
 # for excel output
 specimen.markup <- bind_rows(
-                           # na_index, ### too slow :(
-                           solo_index,
-                           outlier_index,
-                           dup_id_index1,
-                           dup_id_index2)
+  # na_index, ### too slow :(
+  solo_index,
+  outlier_index,
+  dup_id_index1,
+  dup_id_index2)
 
 ```
 

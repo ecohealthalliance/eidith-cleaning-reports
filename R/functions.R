@@ -22,12 +22,12 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
   dat <- dat %>% select(-matches(!!cols_to_ignore_regex))
 
   collapse_mult <- function(x){
-    stri_split_fixed(x, ";") %>%
+    str_split(x, pattern = ";") %>%
       unlist() %>%
       str_trim() %>%
       unique() %>%
       paste(., collapse = "; ")
-    }
+  }
 
   # character data
   dat_char <- dat %>%
@@ -48,11 +48,17 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
 
   # date data
   dat_date <- dat %>%
-    select_if(is.Date) %>%
-    gather() %>%
-    na.omit() %>%
-    group_by(key) %>%
-    summarize(values = paste(min(value), max(value), sep = " to "), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+    select_if(function(col) is.Date(col) | is.difftime(col))
+
+  dat_date <- map_df(seq_along(dat_date), function(i){
+    test <- dat_date %>%
+      select(i) %>%
+      gather() %>%
+      na.omit() %>%
+      group_by(key) %>%
+      summarize(values = paste(min(value), max(value), sep = " to "), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+  })
+
 
   # all na
   dat_na_names <- dat %>%
@@ -102,7 +108,7 @@ get_solo_char <- function(dat) {
     col_dat <- dat %>% pull(i)
 
     # if these criteria are met...
-    if(class(col_dat) == "character" &
+    if(class(col_dat)[1] == "character" &
        !all(is.na(col_dat)) &
        !grepl("Notes|EventName|ID", colnames(dat[,i]), ignore.case = FALSE)) {
 
@@ -136,7 +142,7 @@ get_outlier <- function(dat){
     col_dat <- dat %>% pull(i)
 
     # if these criteria are met...
-    if(class(col_dat) == "numeric" &
+    if(class(col_dat)[1] == "numeric" &
        !all(is.na(col_dat)) &
        !grepl("Latitude|Longitude", colnames(dat[,i]), ignore.case = TRUE) ){
 
@@ -154,9 +160,6 @@ get_outlier <- function(dat){
 }
 
 # check that EventName matches SiteName and EventDate
-library(stringi)
-library(lubridate)
-
 get_event_mismatch <- function(dat){
 
   # compare year, month, day, sitename
