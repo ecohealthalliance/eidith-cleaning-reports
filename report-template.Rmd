@@ -150,7 +150,7 @@ create_unique_table(specimen,
 ```
 </details>
 
-```{r write-xlsx-table, include = FALSE}
+```{r style-xlsx-table, include = FALSE}
 
 # Get highlighted workbook object
 markup_list <- list("event" = event.markup, "animal" = animal.markup, "specimen" = specimen.markup)
@@ -161,6 +161,10 @@ wb <- get_highlighted_wb(
   tab.names = names(markup_list),
   markup.dfs = markup_list
 )
+
+```
+
+```{r write-xlsx-table, include = FALSE}
 
 # Write the xlsx workbook for the country in question
 saveWorkbook(

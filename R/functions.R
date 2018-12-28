@@ -220,7 +220,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
     # Modifcation of the markup.df to account for the "Notes" field
 
-    markup.dfs[[df]] <- bind_rows(markup.dfs[[df]], get_cells_w_notes(dfs[[df]]))
+    # markup.dfs[[df]] <- bind_rows(markup.dfs[[df]], get_cells_w_notes(dfs[[df]]))
 
     # Increment the "col" field in the markup dataframe by 1 since the new "cleaning_flag"
     # column will be first in the final exported data, throwing everything off by 1
