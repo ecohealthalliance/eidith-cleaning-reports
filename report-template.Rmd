@@ -135,8 +135,9 @@ specimen.markup <- bind_rows(
   # na_index, ### too slow :(
   solo_index,
   outlier_index,
-  dup_id_index1,
-  dup_id_index2)
+  #dup_id_index1,
+  #dup_id_index2
+  )
 
 ```
 
