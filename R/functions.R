@@ -188,6 +188,19 @@ get_dups <- function(dat, col_name){
 
 }
 
+# Get cells for which the row has notes in the "Notes" column
+
+get_cells_w_notes <- function(dat) {
+
+  which_rows <- which(!is.na(dat$Notes))
+
+  n.cols <- dim(dat)[2]
+
+  tibble(row = rep(which_rows, each = n.cols),
+         col = rep(1:n.cols, times = length(which_rows)),
+         flag = "notes for row", fill = "darkseagreen1")
+}
+
 # Generate a highlighted (formatted) XLSX workbook object
 # dfs = a list of dataframes to write to distinct worksheets of the xlsx workbook file
 # tab.names = a vector of desired names for the worksheet tabs
@@ -205,6 +218,10 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   for(df in seq_along(dfs)) {
 
+    # Modifcation of the markup.df to account for the "Notes" field
+
+    markup.dfs[[df]] <- bind_rows(markup.dfs[[df]], get_cells_w_notes(dfs[[df]]))
+
     # Increment the "col" field in the markup dataframe by 1 since the new "cleaning_flag"
     # column will be first in the final exported data, throwing everything off by 1
 
@@ -217,6 +234,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
       arrange(row, col) %>%
       mutate(flag_mod = paste0(flag, " (", col, ")")) %>%
       group_by(row) %>%
+      filter(flag != "notes for row") %>%
       summarize(row_flag = paste(flag_mod, collapse = "; "))
 
     original.cols <- colnames(dfs[[df]])
@@ -226,6 +244,20 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
         ifelse(sum(flag.table$row == x) == 1, flag.table[flag.table$row == x, 2], "")
       ) %>%
       unlist()
+
+    rows.w.notes <- markup.dfs[[df]] %>%
+      filter(flag == "notes for row") %>%
+      pull(row) %>%
+      unique()
+
+    dfs[[df]]$cleaning_flags <-
+      sapply(1:nrow(dfs[[df]]), function(x)
+        ifelse(x %in% rows.w.notes,
+               paste0(dfs[[df]]$cleaning_flags[x], "; notes for row"),
+               dfs[[df]]$cleaning_flags[x]
+               )
+      ) %>%
+      stringi::stri_replace(., "", regex = "^; ")
 
     dfs[[df]] <- select(dfs[[df]], cleaning_flags, original.cols)
   }
