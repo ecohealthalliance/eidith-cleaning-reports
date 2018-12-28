@@ -108,13 +108,56 @@ create_unique_table(animal,
 ```
 </details>
 
+## Specimen Table
+```{r specimen}
+
+specimen <- read_tsv(h("raw-eidith-data", "Specimen.tsv.gz"), col_types = specimen_specs) %>%
+  filter(Country == country) %>%
+  select(-`TimeOfSpecimenCollection (humans only)`) # to revisit--having trouble getting into correct format
+
+#class(specimen$`TimeOfSpecimenCollection (humans only)`) <- "hms"
+
+## for excel-------
+
+# check for NAs
+na_index <- get_na(specimen, cols_to_ignore = c("Notes", "humans only"))
+
+# check for solo chars
+solo_index <- get_solo_char(specimen)
+
+# check for numeric outliers (not including lat/long)
+outlier_index <- get_outlier(specimen)
+
+# check ID dups 
+dup_id_index1 <- get_dups(specimen, "Animal/Human ID")
+dup_id_index2 <- get_dups(specimen, "SpecimenID")
+
+# for excel output
+specimen.markup <- bind_rows(
+                           # na_index, ### too slow :(
+                           solo_index,
+                           outlier_index,
+                           dup_id_index1,
+                           dup_id_index2)
+
+```
+
+<details>
+<summary>Unique Value Check</summary>
+```{r specimen-unique}
+# unique character values table
+create_unique_table(specimen,
+                    cols_to_ignore = c("Notes", "SiteName", "ID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
+```
+</details>
+
 ```{r write-xlsx-table, include = FALSE}
 
 # Get highlighted workbook object
 wb <- get_highlighted_wb(
-  dfs = list(event, animal),
-  tab.names = c("Event", "Animal"),
-  markup.dfs = list(event.markup, animal.markup)
+  dfs = list(event, animal, specimen),
+  tab.names = c("Event", "Animal", "Specimen"),
+  markup.dfs = list(event.markup, animal.markup, specimen.markup)
 )
 
 # Write the xlsx workbook for the country in question

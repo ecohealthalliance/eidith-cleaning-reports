@@ -21,13 +21,22 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
 
   dat <- dat %>% select(-matches(!!cols_to_ignore_regex))
 
+  collapse_mult <- function(x){
+    stri_split_fixed(x, ";") %>%
+      unlist() %>%
+      str_trim() %>%
+      unique() %>%
+      paste(., collapse = "; ")
+    }
+
   # character data
   dat_char <- dat %>%
     select_if(is.character) %>%
     gather() %>%
     na.omit() %>%
     group_by(key) %>%
-    summarize(values = paste(unique(value), collapse = "; "), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+    summarize(values = collapse_mult(value),
+              count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
 
   # numeric data
   dat_num <- dat %>%
@@ -95,7 +104,7 @@ get_solo_char <- function(dat) {
     # if these criteria are met...
     if(class(col_dat) == "character" &
        !all(is.na(col_dat)) &
-       !grepl("Notes|EventName|AnimalID", colnames(dat[,i]), ignore.case = TRUE)) {
+       !grepl("Notes|EventName|ID", colnames(dat[,i]), ignore.case = FALSE)) {
 
       # summarize count by unique character string
       col_tbl <- table(col_dat) %>% as_tibble()
@@ -278,3 +287,4 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   return(wb)
 }
+

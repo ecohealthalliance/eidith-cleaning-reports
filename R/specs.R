@@ -118,3 +118,37 @@ animal_specs <- cols(
   RodentOtherWeight = col_double(),
   Notes = col_character()
 )
+
+specimen_specs <- cols(
+  Country = col_character(),
+  SiteName = col_character(),
+  ConcurrentSamplingSite = col_character(),
+  District = col_character(),
+  StateProv = col_character(),
+  SiteLatitudeUnrounded = col_double(),
+  SiteLongitudeUnrounded = col_double(),
+  EventLatitudeUnrounded = col_double(),
+  EventLongitudeUnrounded = col_double(),
+  EventDate = col_date(format = ""),
+  Season = col_character(),
+  DurationDays = col_integer(),
+  EventName = col_character(),
+  DiseaseTransmissionInterfaces = col_character(),
+  `Animal/Human ID` = col_character(),
+  TaxaGroup = col_character(),
+  AnimalClass = col_character(),
+  SpeciesScientificName = col_character(),
+  SpeciesEnglishName = col_character(),
+  Sex = col_character(),
+  SpecimenID = col_character(),
+  SpecimenType = col_character(),
+  Medium = col_character(),
+  Container = col_character(),
+  StorageMethod = col_character(),
+  StorageFacility = col_character(),
+  StorageLocation = col_character(),
+  Notes = col_character(),
+  `DateOfSpecimenCollection (humans only)` = col_date(format = ""),
+  `TimeOfSpecimenCollection (humans only)` = col_time(format = "%I:%M%p"),
+  `SpecimenCollectedForDiagnosis (humans only)` = col_character()
+)
