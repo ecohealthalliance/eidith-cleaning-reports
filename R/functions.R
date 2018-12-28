@@ -181,7 +181,7 @@ get_dups <- function(dat, col_name){
 
   which_dup <- dat %>%
     select(!!col_name) %>%
-    mutate(is_dup = duplicated(!!col_name)|duplicated(!!col_name, fromLast = TRUE))
+    mutate(is_dup = duplicated(.)|duplicated(., fromLast = TRUE))
 
   tibble(row = which(which_dup$is_dup==TRUE), col = grep(col_name, names(dat)),
          flag = "duplicate identifier", fill = "purple")
