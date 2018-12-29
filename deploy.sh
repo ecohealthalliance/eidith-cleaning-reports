@@ -3,7 +3,7 @@
 set -e
 set +x
 
-if [[ ${CIRCLE_BRANCH} == "master" ]]; then
+if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
 
   # Set git config information
   git config --global user.name "Noam Ross (Travis-CI)"
