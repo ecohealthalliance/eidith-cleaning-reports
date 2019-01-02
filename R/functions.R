@@ -272,27 +272,30 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   # Generate a style list containing style information for each worksheet
 
-  style.list <- vector("list", length(dfs))
+  style.list <- lapply(markup.dfs, function(x) {
 
-  names(style.list) <- tab.names
-
-  markup_sum <- lapply(markup.dfs, function(x) {
     x %>%
       group_by(fill) %>%
-      summarize(rows = list(row + 1), cols = list(col), style = list(createStyle(fgFill = fill[1]))) %>%
+      summarize(rows = list(row + 1),
+                cols = list(col),
+                style = list(createStyle(fgFill = fill[1]))
+      ) %>%
       ungroup()
   })
 
   for(df in seq_along(dfs)) {
-    for(x in seq_along(markup_sum[[df]]$style)) {
+
+    for(x in seq_along(style.list[[df]]$style)) {
+
       addStyle(wb,
                sheet = tab.names[df],
-               style = markup_sum[[df]]$style[[x]],
-               rows = markup_sum[[df]]$rows[[x]],
-               cols = markup_sum[[df]]$cols[[x]],
+               style = style.list[[df]]$style[[x]],
+               rows = style.list[[df]]$rows[[x]],
+               cols = style.list[[df]]$cols[[x]],
       )
     }
   }
+
   # Return workbook
 
   return(wb)
