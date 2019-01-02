@@ -93,7 +93,7 @@ dup_id_index <- get_dups(animal, "AnimalID")
 
 # for excel output
 animal.markup <- bind_rows(
-  # na_index, ### too slow :(
+  na_index, 
   solo_index,
   outlier_index,
   dup_id_index)
@@ -132,11 +132,11 @@ dup_id_index2 <- get_dups(specimen, "SpecimenID")
 
 # for excel output
 specimen.markup <- bind_rows(
-  # na_index, ### too slow :(
+  na_index, 
   solo_index,
   outlier_index,
-  #dup_id_index1,
-  #dup_id_index2
+  dup_id_index1,
+  dup_id_index2
   )
 
 ```
@@ -153,7 +153,7 @@ create_unique_table(specimen,
 ```{r style-xlsx-table, include = FALSE}
 
 # Get highlighted workbook object
-markup_list <- list("event" = event.markup, "animal" = animal.markup, "specimen" = specimen.markup)
+markup_list <- list("event" = markup_list, "animal" = animal.markup, "specimen" = specimen.markup)
 markup_list <- markup_list[unlist(map(markup_list, ~nrow(.x)>0))]
 
 wb <- get_highlighted_wb(
