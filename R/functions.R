@@ -22,10 +22,16 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
   dat <- dat %>% select(-matches(!!cols_to_ignore_regex))
 
   collapse_mult <- function(x){
-    str_split(x, pattern = ";") %>%
+
+    clean_x <- str_split(x, pattern = ";") %>%
       unlist() %>%
-      str_trim() %>%
-      unique() %>%
+      str_trim()
+
+    unique_values <- unique(clean_x) %>% sort()
+
+    sum_tbl <- table(clean_x)
+
+    paste0(unique_values, " (", sum_tbl, ")" ) %>%
       paste(., collapse = "; ")
   }
 
@@ -58,7 +64,6 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
       group_by(key) %>%
       summarize(values = paste(min(value), max(value), sep = " to "), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
   })
-
 
   # all na
   dat_na_names <- dat %>%
@@ -176,19 +181,36 @@ get_event_mismatch <- function(dat){
          flag = "EventName does not match EventDate or SiteName", fill = "orange")
 }
 
-# check that SpecimenID matches Animal ID and SpecimentType
+# check that SpecimenID matches Animal ID and SpecimentType/Medium
 get_specimen_mismatch <- function(dat){
+
+  lookup <- read_csv(here::here("specimen_lookup.csv"))
+  specimen_lookup <- lookup %>% filter(type != "storage medium") %>% select(-type) %>% rename(full_specimen = full)
+  medium_lookup <- lookup %>% filter(type == "storage medium") %>% select(-type) %>% rename(full_medium = full)
 
   which_mismatch <- dat %>%
     mutate(SpecimenID = str_split(SpecimenID, "\\."),
-           ID_check = map(SpecimenID, ~.x[1]) == `Animal/Human ID`,
-           spec_abbr = map(SpecimenID, ~.x[2])) %>% #TODO lookup abbreviations against full names in SpecimenType
+           id = map(SpecimenID, ~.x[1]),
+           specimen_abbr = map(SpecimenID, function(x){
+             x[2] %>% str_sub(1,2)
+           }),
+           medium_abbr = map(SpecimenID, function(x){
+             x[2] %>% str_sub(3,3)
+           })
+    ) %>%
+    unnest(id, specimen_abbr, medium_abbr) %>%
+    left_join(specimen_lookup, by = c("specimen_abbr" = "code")) %>%
+    left_join(medium_lookup, by = c("medium_abbr" = "code")) %>%
+    mutate(ID_check = id == `Animal/Human ID`,
+           specimen_check = tolower(full_specimen) == tolower(SpecimenType),
+           medium_check = tolower(full_medium) == tolower(Medium)) %>%
+    replace_na(list(specimen_check = FALSE, medium_check = FALSE)) %>%
     rowwise() %>%
-    mutate(specimen_name_check = all(ID_check))
+    mutate(specimen_name_check = all(ID_check, specimen_check, medium_check))
 
   # output mismatches
   tibble(row = which(which_mismatch$specimen_name_check==FALSE), col = grep("SpecimenID", names(dat)),
-         flag = "SpecimenID does not match Animal/Human ID or SpecimenType", fill = "orange")
+         flag = "Mismatch between SpecimenID and Animal/Human ID, SpecimenType, and/or Medium. Abbreviated code in SpecimenID may not be recognized.", fill = "orange")
 }
 
 # identify duplicates
