@@ -80,7 +80,7 @@ animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz"), col_types = animal_spe
 ## for excel-------
 
 # check for NAs
-na_index <- get_na(animal, cols_to_ignore = c("Notes", "Bat", "NHP", "Rodent", "Taxa|Class|Order|Family|Genus|Species"))
+na_index <- get_na(animal, cols_to_ignore = c("Notes", "Comment", "Bat", "NHP", "Rodent", "Taxa|Class|Order|Family|Genus|Species"))
 
 # check for solo chars
 solo_index <- get_solo_char(animal)
@@ -93,7 +93,7 @@ dup_id_index <- get_dups(animal, "AnimalID")
 
 # for excel output
 animal.markup <- bind_rows(
-  na_index, 
+  #na_index, 
   solo_index,
   outlier_index,
   dup_id_index)
@@ -118,7 +118,7 @@ specimen <- read_tsv(h("raw-eidith-data", "Specimen.tsv.gz"), col_types = specim
 ## for excel-------
 
 # check for NAs
-na_index <- get_na(specimen, cols_to_ignore = c("Notes", "humans only"))
+na_index <- get_na(specimen, cols_to_ignore = c("Notes", "Comment", "humans only"))
 
 # check for solo chars
 solo_index <- get_solo_char(specimen)
@@ -126,17 +126,19 @@ solo_index <- get_solo_char(specimen)
 # check for numeric outliers (not including lat/long)
 outlier_index <- get_outlier(specimen)
 
+# check that EventName matches SiteName and EventDate
+specimen_index <- get_specimen_mismatch(specimen)
+
 # check ID dups 
-dup_id_index1 <- get_dups(specimen, "Animal/Human ID")
-dup_id_index2 <- get_dups(specimen, "SpecimenID")
+dup_id_index <- get_dups(specimen, "SpecimenID")
 
 # for excel output
 specimen.markup <- bind_rows(
-  na_index, 
+  #na_index, 
   solo_index,
   outlier_index,
-  dup_id_index1,
-  dup_id_index2
+  specimen_index,
+  dup_id_index
   )
 
 ```
@@ -153,7 +155,7 @@ create_unique_table(specimen,
 ```{r style-xlsx-table, include = FALSE}
 
 # Get highlighted workbook object
-markup_list <- list("event" = markup_list, "animal" = animal.markup, "specimen" = specimen.markup)
+markup_list <- list("event" = event.markup, "animal" = animal.markup, "specimen" = specimen.markup)
 markup_list <- markup_list[unlist(map(markup_list, ~nrow(.x)>0))]
 
 wb <- get_highlighted_wb(

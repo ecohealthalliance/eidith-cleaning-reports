@@ -176,6 +176,21 @@ get_event_mismatch <- function(dat){
          flag = "EventName does not match EventDate or SiteName", fill = "orange")
 }
 
+# check that SpecimenID matches Animal ID and SpecimentType
+get_specimen_mismatch <- function(dat){
+
+  which_mismatch <- dat %>%
+    mutate(SpecimenID = str_split(SpecimenID, "\\."),
+           ID_check = map(SpecimenID, ~.x[1]) == `Animal/Human ID`,
+           spec_abbr = map(SpecimenID, ~.x[2])) %>% #TODO lookup abbreviations against full names in SpecimenType
+    rowwise() %>%
+    mutate(specimen_name_check = all(ID_check))
+
+  # output mismatches
+  tibble(row = which(which_mismatch$specimen_name_check==FALSE), col = grep("SpecimenID", names(dat)),
+         flag = "SpecimenID does not match Animal/Human ID or SpecimenType", fill = "orange")
+}
+
 # identify duplicates
 get_dups <- function(dat, col_name){
 
