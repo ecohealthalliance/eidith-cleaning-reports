@@ -220,7 +220,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
     # Modifcation of the markup.df to account for the "Notes" field
 
-    # markup.dfs[[df]] <- bind_rows(markup.dfs[[df]], get_cells_w_notes(dfs[[df]]))
+    markup.dfs[[df]] <- bind_rows(markup.dfs[[df]], get_cells_w_notes(dfs[[df]]))
 
     # Increment the "col" field in the markup dataframe by 1 since the new "cleaning_flag"
     # column will be first in the final exported data, throwing everything off by 1
@@ -255,7 +255,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
         ifelse(x %in% rows.w.notes,
                paste0(dfs[[df]]$cleaning_flags[x], "; notes for row"),
                dfs[[df]]$cleaning_flags[x]
-               )
+        )
       ) %>%
       stringi::stri_replace(., "", regex = "^; ")
 
@@ -276,48 +276,23 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   names(style.list) <- tab.names
 
-  for(df in seq_along(dfs)) {
-
-    style.list[[df]] <- list(rep(NULL), length(markup.dfs[[df]]$fill))
-
-    style.list[[df]] <-
-
-      sapply(1:length(markup.dfs[[df]]$fill), function(x)
-
-        style.list[[df]][[x]] <- createStyle(fgFill = as.character(markup.dfs[[df]]$fill[x]))
-      )
-  }
-
-  # Generate a collated style list for the whole workbook
-
-  wb.list <- vector("list", 3)
-
-  names(wb.list) <- c("row", "col", "style")
+  markup_sum <- lapply(markup.dfs, function(x) {
+    x %>%
+      group_by(fill) %>%
+      summarize(rows = list(row + 1), cols = list(col), style = list(createStyle(fgFill = fill[1]))) %>%
+      ungroup()
+  })
 
   for(df in seq_along(dfs)) {
-
-    wb.list[["row"]][[df]] <- markup.dfs[[df]]$row
-
-    wb.list[["col"]][[df]] <- markup.dfs[[df]]$col
-
-    wb.list[["style"]][[df]] <- style.list[[df]]
-  }
-
-  # Style the worksheets in the workbook
-
-  for(df in seq_along(dfs)) {
-
-    sapply(1:length(wb.list[["style"]][[df]]), function(x)
-
+    for(x in seq_along(markup_sum[[df]]$style)) {
       addStyle(wb,
                sheet = tab.names[df],
-               style = wb.list[["style"]][[df]][[x]],
-               rows = wb.list[["row"]][[df]][[x]] + 1,
-               cols = wb.list[["col"]][[df]][[x]]
+               style = markup_sum[[df]]$style[[x]],
+               rows = markup_sum[[df]]$rows[[x]],
+               cols = markup_sum[[df]]$cols[[x]],
       )
-    )
+    }
   }
-
   # Return workbook
 
   return(wb)

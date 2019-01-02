@@ -19,3 +19,4 @@ Depends:
     stringi
 Remotes:
     ecohealthalliance/eidith,
+    noamross/openxlsx
