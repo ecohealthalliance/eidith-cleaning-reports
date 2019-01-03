@@ -2,6 +2,13 @@
 h <- here::here
 source("R/functions.R")
 
+
+# First, clone this repository and open the RStudio project:
+# https://github.com/ecohealthalliance/eidith-cleaning-reports
+#
+# If you don't have them the following will install all packages need for this
+# devtools::install_deps(dependencies=TRUE)
+
 # Set the countries of interest
 countries <- c(
   "Malaysia, Peninsular",
@@ -9,7 +16,8 @@ countries <- c(
 )
 
 # Run the following with your Malaysia-enabled EIDITH credentials in your
-# .Renviron file.  It will download all countries you have access to.
+# .Renviron file. (See ?eidith::ed_auth) It will download data from all
+# countries youhave access to.
 download_raw_p2_data(endpoints = eidith::p2_api_endpoints(),
                      output_dir = "raw-eidith-data",
                      verbose = TRUE)
