@@ -84,7 +84,7 @@ leaflet(data = event) %>%
 <details>
 <summary>Event Summary</summary>
 ```{r event-unique}
-create_unique_table(event, cols_to_ignore = c("EventName", "SiteName", "Notes"))
+create_unique_table(event, cols_to_ignore = c("EventName", "SiteName", "Notes", "Comment"))
 
 ```
 </details>
@@ -96,7 +96,7 @@ animal <- read_tsv(h("raw-eidith-data",  paste0("Animal-", country, ".tsv.gz")),
 ## for excel-------
 
 # check for NAs
-na_index <- get_na(animal, cols_to_ignore = c("Notes", "Comment", "Bat", "NHP", "Rodent", "Taxa|Class|Order|Family|Genus|Species"))
+na_index <- get_na(animal, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species"))
 
 # check for solo chars
 solo_index <- get_solo_char(animal)
@@ -121,7 +121,7 @@ animal.markup <- bind_rows(
 ```{r animal-unique}
 # unique character values table
 create_unique_table(animal,
-                    cols_to_ignore = c("Notes", "SiteName", "AnimalID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
+                    cols_to_ignore = c("Notes", "Comment", "SiteName", "AnimalID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
 ```
 </details>
 
@@ -162,7 +162,7 @@ specimen.markup <- bind_rows(
 ```{r specimen-unique}
 # unique character values table
 create_unique_table(specimen,
-                    cols_to_ignore = c("Notes", "SiteName", "ID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
+                    cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
 ```
 </details>
 
