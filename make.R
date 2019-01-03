@@ -1,11 +1,17 @@
 #!/usr/bin/env Rscript
 h <- here::here
 
-countries <- sort(
-  unique(
-    readr::read_tsv(h("raw-eidith-data", "Event.tsv.gz"),
-                    col_types = readr::cols_only(Country = readr::col_character()))$Country
-  )
+countries <- c(
+  "Bangladesh",
+  "China",
+  "India",
+  "Indonesia",
+  "Ivory Coast",
+  "Jordan",
+  "Liberia",
+  "Republic of Congo",
+  "South Sudan",
+  "Thailand"
 )
 
 for (country in countries) {
