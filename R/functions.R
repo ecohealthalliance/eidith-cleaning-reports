@@ -83,7 +83,12 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
   bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
     arrange(factor(key, levels = colnames(dat))) %>%
     rename(field = key) %>%
-    kable() %>%
+    mutate(count_missing =
+             cell_spec(count_missing, format = "html",
+                       background = ifelse(grepl("^0/", count_missing), "#FFFFFF", "#EA3C53")
+             )
+    ) %>%
+    kable(format = "html", escape = FALSE) %>%
     kable_styling()
 }
 
