@@ -96,7 +96,7 @@ animal <- read_tsv(h("raw-eidith-data",  paste0("Animal-", country, ".tsv.gz")),
 ## for excel-------
 
 # check for NAs
-na_index <- get_na(animal, cols_to_ignore = c("Notes", "Comment", "Bat", "NHP", "Rodent", "Taxa|Class|Order|Family|Genus|Species"))
+na_index <- get_na(animal, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species"))
 
 # check for solo chars
 solo_index <- get_solo_char(animal)
@@ -109,7 +109,7 @@ dup_id_index <- get_dups(animal, "AnimalID")
 
 # for excel output
 animal.markup <- bind_rows(
-  #na_index, 
+  na_index, 
   solo_index,
   outlier_index,
   dup_id_index)
@@ -148,7 +148,7 @@ dup_id_index <- get_dups(specimen, "SpecimenID")
 
 # for excel output
 specimen.markup <- bind_rows(
-  #na_index, 
+  na_index, 
   solo_index,
   outlier_index,
   specimen_index,
