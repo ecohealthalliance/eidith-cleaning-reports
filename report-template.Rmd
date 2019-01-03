@@ -23,8 +23,25 @@ walk(list.files(h("R/"), full.names = TRUE),
 country <- params$country
 
 ```
+This report and accompanying Excel workbook are intended to provide data cleaning support to country teams.  Please review both documents to catch any potential errors in your data.
 
-## Event Table
+**Excel workbook**  
+EIDITH tables are shown on separate sheets in each workbook.  Cells requiring review within each table are highlighted, and the basis of the highlight is provided in the first column of each table (“cleaning_flags”).  The following potential issues are flagged:   
+
+•	NAs (*to add: which columns are included in this check?*)  
+•	Unique character responses (i.e., the only case of a given response in the field).  
+•	Numeric outliers, defined as greater than the 75th percentile + 2.5 * inter-quartile range or less than the 25th percentile - 2.5 * IQR.  
+•	Duplicate EventName, AnimalID, or SpecimenID.  
+•	In the Event table, mismatches between EventName, which is “SiteName-EventDate”, and the SiteName or EventDate fields.  
+•	In the Specimen table, mismatches SpecimenID, which is “Animal/HumanID.SpecimenTypeMedium”, and Animal/Human ID, SpecimenType, and/or Medium fields.  Note that SpecimenID cells may be highlighted if the SpecimenTypeMedium abbreviations are not recognized in EIDITH ID protocols.
+
+Note that tables are excluded from the workbook if no cells are found to be a potential issue.  
+
+**Report**  
+•	The map below should be used confirm the correct placement of site locations (mouseover points to see site names).  
+•	The table summaries below the map should be used to confirm values and counts of missing responses within each field.  For numeric and date fields, the range of values is shown.  For character fields, each unique value is provided with response counts in parenthesis.  Note that for fields with multiple possible responses (e.g., “DiseaseTransmissionInterfaces”), counts represent the total number of times each response is given.  The following are excluded from these summary tables: latitude/longitude, notes/comments, event name, site name, and ID fields.  The animal table also excludes any fields related to species type, as these will be reviewed separately.  
+
+
 ```{r event}
 event <- read_tsv(h("raw-eidith-data", paste0("Event-", country, ".tsv.gz")),  col_types = event_specs)
 
@@ -53,7 +70,6 @@ event.markup <- bind_rows(na_index,
                           dup_id_index)
 ```
 
-Site Locations
 ```{r event-site-map}
 # map site locations 
 leaflet(data = event) %>%
@@ -63,14 +79,13 @@ leaflet(data = event) %>%
 ```
 
 <details>
-<summary>Unique Value Check</summary>
+<summary>Event Summary</summary>
 ```{r event-unique}
 create_unique_table(event, cols_to_ignore = c("EventName", "SiteName", "Notes"))
 
 ```
 </details>
 
-## Animal Table
 ```{r animal}
 
 animal <- read_tsv(h("raw-eidith-data",  paste0("Animal-", country, ".tsv.gz")), col_types = animal_specs) 
@@ -99,7 +114,7 @@ animal.markup <- bind_rows(
 ```
 
 <details>
-<summary>Unique Value Check</summary>
+<summary>Animal Summary</summary>
 ```{r animal-unique}
 # unique character values table
 create_unique_table(animal,
@@ -107,7 +122,6 @@ create_unique_table(animal,
 ```
 </details>
 
-## Specimen Table
 ```{r specimen}
 
 specimen <- read_tsv(h("raw-eidith-data", paste0("Specimen-", country, ".tsv.gz")), col_types = specimen_specs)
@@ -141,7 +155,7 @@ specimen.markup <- bind_rows(
 ```
 
 <details>
-<summary>Unique Value Check</summary>
+<summary>Specimen Summary</summary>
 ```{r specimen-unique}
 # unique character values table
 create_unique_table(specimen,
