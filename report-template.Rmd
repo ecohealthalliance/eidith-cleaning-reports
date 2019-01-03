@@ -169,8 +169,10 @@ create_unique_table(specimen,
 ```{r style-xlsx-table, include = FALSE}
 
 # Get highlighted workbook object
-markup_list <- list("event" = event.markup, "animal" = animal.markup, "specimen" = specimen.markup)
-markup_list <- markup_list[unlist(map(markup_list, ~nrow(.x)>0))]
+markup_list <- list("event" = event.markup, 
+                    "animal" = animal.markup, 
+                    "specimen" = specimen.markup
+                    )
 
 wb <- get_highlighted_wb(
   dfs = sapply(names(markup_list), get),
