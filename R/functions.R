@@ -282,7 +282,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
     flag.table <- markup.dfs[[df]] %>%
       arrange(row, col) %>%
       mutate(col.name = original.cols[col - 1],
-             col = cellranger::num_to_letter(col),
+             col = cellcol_lookup[col],
              flag_mod = if_else(flag == "notes for row", flag, paste0(flag, " (", col, "; ", col.name, ")"))) %>%
       group_by(row) %>%
       filter(flag != "notes for row") %>%
@@ -416,3 +416,5 @@ get_event_icons <- function() {
     )
   )
 }
+
+cellcol_lookup <- cellranger::num_to_letter(1:2000)
