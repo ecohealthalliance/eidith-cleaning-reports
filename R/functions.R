@@ -4,13 +4,21 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
                                  verbose = TRUE) {
   if (!dir.exists(output_dir)) dir.create(output_dir)
 
-  files <- purrr::map(endpoints, function(x) {
-    file_out <- file.path(output_dir, paste0(x, ".tsv.gz"))
+  files <- purrr::walk(endpoints, function(x) {
+
     dat <- eidith::ed2_get(x, postprocess = FALSE, verbose = verbose)
-    readr::write_tsv(dat, file_out)
-    return(file_out)
+    if (!is.null(dat$Country)) {
+      datlist <- split(dat, dat$Country)
+      purrr::walk(datlist, function(z) {
+        file_out <- file.path(output_dir, paste0(x, "-", z$Country[1], ".tsv.gz"))
+        readr::write_tsv(z, file_out)
+      })
+    } else {
+      file_out <- file.path(output_dir, paste0(x, ".tsv.gz"))
+      readr::write_tsv(dat, file_out)
+    }
   })
-  invisible(files)
+  return(TRUE)
 }
 
 # create unique values table

@@ -26,8 +26,7 @@ country <- params$country
 
 ## Event Table
 ```{r event}
-event <- read_tsv(h("raw-eidith-data", "Event.tsv.gz"),  col_types = event_specs) %>%
-  filter(Country == country) 
+event <- read_tsv(h("raw-eidith-data", paste0("Event-", country, ".tsv.gz")),  col_types = event_specs)
 
 ## for excel-------
 
@@ -74,8 +73,7 @@ create_unique_table(event, cols_to_ignore = c("EventName", "SiteName", "Notes"))
 ## Animal Table
 ```{r animal}
 
-animal <- read_tsv(h("raw-eidith-data", "Animal.tsv.gz"), col_types = animal_specs) %>%
-  filter(Country == country)
+animal <- read_tsv(h("raw-eidith-data",  paste0("Animal-", country, ".tsv.gz")), col_types = animal_specs) 
 
 ## for excel-------
 
@@ -112,8 +110,7 @@ create_unique_table(animal,
 ## Specimen Table
 ```{r specimen}
 
-specimen <- read_tsv(h("raw-eidith-data", "Specimen.tsv.gz"), col_types = specimen_specs) %>%
-  filter(Country == country) 
+specimen <- read_tsv(h("raw-eidith-data", paste0("Specimen-", country, ".tsv.gz")), col_types = specimen_specs)
 
 ## for excel-------
 
@@ -167,12 +164,10 @@ wb <- get_highlighted_wb(
 ```
 
 ```{r write-xlsx-table, include = FALSE}
-
 # Write the xlsx workbook for the country in question
 saveWorkbook(
   wb,
   file = h("outputs", paste0(country, "-eidith-cleaning-workbook.xlsx")),
   overwrite = TRUE
 )
-
 ```
