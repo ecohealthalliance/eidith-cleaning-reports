@@ -16,7 +16,8 @@ Depends:
     kableExtra,
     lubridate,
     assertthat,
-    stringi
+    stringi,
+    cellranger
 Remotes:
     ecohealthalliance/eidith,
     noamross/openxlsx

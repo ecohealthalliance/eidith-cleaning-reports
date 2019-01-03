@@ -277,7 +277,8 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
     flag.table <- markup.dfs[[df]] %>%
       arrange(row, col) %>%
-      mutate(flag_mod = paste0(flag, " (", col, ")")) %>%
+      mutate(col = cellranger::num_to_letter(col),
+             flag_mod = paste0(flag, " (", col, ")")) %>%
       group_by(row) %>%
       filter(flag != "notes for row") %>%
       summarize(row_flag = paste(flag_mod, collapse = "; "))
