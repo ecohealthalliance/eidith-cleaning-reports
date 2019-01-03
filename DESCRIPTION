@@ -17,7 +17,8 @@ Depends:
     lubridate,
     assertthat,
     stringi,
-    cellranger
+    cellranger,
+    htmltools
 Remotes:
     ecohealthalliance/eidith,
     noamross/openxlsx

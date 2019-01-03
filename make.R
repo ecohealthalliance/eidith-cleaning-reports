@@ -4,6 +4,7 @@ h <- here::here
 countries <- c(
   "Bangladesh",
   "China",
+  "Egypt",
   "India",
   "Indonesia",
   "Ivory Coast",

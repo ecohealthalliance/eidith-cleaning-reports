@@ -347,3 +347,80 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
   return(wb)
 }
 
+# Get leaflet labels for events
+
+get_event_labels <- function() {
+
+  # Generate text labels
+
+  labs <- lapply(seq(nrow(event)), function(x) {
+
+    paste0("Site Name: ",
+           pull(event[x, "SiteName"]),
+           "<br>Concurrent Sampling Site: ",
+           pull(event[x, "ConcurrentSamplingSite"])
+    )
+  })
+
+  # Convert to html for display by leaflet
+
+  labs <- lapply(labs, htmltools::HTML)
+
+  return(labs)
+}
+
+# Get leaflet icon styling for events
+
+get_event_icons <- function() {
+
+  # Generate a table of all unique concurrent site values, along
+  # with a column indicating the level of those unique values,
+  # ensuring that "Independent Site" is always level 1
+
+  level.table <- event %>%
+    pull(ConcurrentSamplingSite) %>%
+    sort() %>%
+    factor()
+
+  if("Independent Site" %in% unique(event$ConcurrentSamplingSite)) {
+
+    level.table <- relevel(level.table, "Independent Site")
+  }
+
+  level.table <- level.table %>%
+    levels() %>%
+    data.frame() %>%
+    mutate(site_factor_level = 1:n())
+
+  # Join this information to the event table
+
+  event_mod <- left_join(event, level.table,
+                         by = c("ConcurrentSamplingSite" = "."))
+
+  # Colors allowed by awesomeIcons()
+
+  possible.colors <- c("lightgray", "green", "red", "blue",
+                       "orange", "beige", "purple", "pink",
+                       "white", "gray", "darkpurple", "cadetblue",
+                       "darkgreen", "darkred", "darkblue",
+                       "lightgreen", "lightred", "lightblue"
+                       )
+
+  # Generate a vector of colors based on the site factor level
+
+  colors <- sapply(seq(nrow(event_mod)), function(x)
+
+    possible.colors[pull(event_mod[x, "site_factor_level"])]
+  )
+
+  # Generate icons for plotting with leaflet
+
+  return(
+    awesomeIcons(
+      icon = "fa-circle-o",
+      library = "fa",
+      iconColor = "black",
+      markerColor = colors
+    )
+  )
+}

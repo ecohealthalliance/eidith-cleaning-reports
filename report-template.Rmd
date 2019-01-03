@@ -74,7 +74,10 @@ event.markup <- bind_rows(na_index,
 # map site locations 
 leaflet(data = event) %>%
   addTiles() %>%
-  addMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, label = ~SiteName)
+  addAwesomeMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, 
+                    label = get_event_labels(),
+                    icon = get_event_icons()
+  )
 
 ```
 
