@@ -10,11 +10,11 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
     if (!is.null(dat$Country)) {
       datlist <- split(dat, dat$Country)
       purrr::walk(datlist, function(z) {
-        file_out <- file.path(output_dir, paste0(x, "-", z$Country[1], ".tsv.gz"))
+        file_out <- file.path(output_dir, stri_join(x, "-", z$Country[1], ".tsv.gz"))
         readr::write_tsv(z, file_out)
       })
     } else {
-      file_out <- file.path(output_dir, paste0(x, ".tsv.gz"))
+      file_out <- file.path(output_dir, stri_join(x, ".tsv.gz"))
       readr::write_tsv(dat, file_out)
     }
   })
@@ -25,7 +25,7 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
 create_unique_table <- function(dat, cols_to_ignore = c()){
 
   # ignore specified columns (regex matching)
-  cols_to_ignore_regex <- paste(c(cols_to_ignore, "Latitude", "Longitude"), collapse = "|")
+  cols_to_ignore_regex <- stri_join(c(cols_to_ignore, "Latitude", "Longitude"), collapse = "|")
 
   dat <- dat %>% select(-matches(!!cols_to_ignore_regex))
 
@@ -39,8 +39,8 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
 
     sum_tbl <- table(clean_x)
 
-    paste0(unique_values, " (", sum_tbl, ")" ) %>%
-      paste(., collapse = "; ")
+    stri_join(unique_values, " (", sum_tbl, ")" ) %>%
+      stri_join(., collapse = "; ")
   }
 
   # character data
@@ -50,7 +50,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
     na.omit() %>%
     group_by(key) %>%
     summarize(values = collapse_mult(value),
-              count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+              count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
 
   # numeric data
   dat_num <- dat %>%
@@ -58,7 +58,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
     gather() %>%
     na.omit() %>%
     group_by(key) %>%
-    summarize(values = paste(min(value), max(value), sep = "-"), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+    summarize(values = stri_join(min(value), max(value), sep = "-"), count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
 
   # date data
   dat_date <- dat %>%
@@ -70,14 +70,14 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
       gather() %>%
       na.omit() %>%
       group_by(key) %>%
-      summarize(values = paste(min(value), max(value), sep = " to "), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+      summarize(values = stri_join(min(value), max(value), sep = " to "), count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
   })
 
   # all na
   dat_na_names <- dat %>%
     select_if(function(x) all(is.na(x))) %>%
     colnames()
-  dat_na <- tibble(key = dat_na_names, values = "all missing", count_missing = paste(nrow(dat), nrow(dat), sep = "/"))
+  dat_na <- tibble(key = dat_na_names, values = "all missing", count_missing = stri_join(nrow(dat), nrow(dat), sep = "/"))
 
   # together
   bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
@@ -101,7 +101,7 @@ get_na <- function(dat, cols_to_ignore = c()){
   which_na <- which_na %>% filter(!col %in% all_na)
 
   # ignore other specified columns (regex matching)
-  cols_to_ignore_regex <- paste(cols_to_ignore, collapse = "|")
+  cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
 
   if(!is.null(cols_to_ignore)){
     col_names <- names(dat)[unique(which_na$col)]
@@ -276,10 +276,10 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
       arrange(row, col) %>%
       mutate(col.name = original.cols[col - 1],
              col = cellcol_lookup[col],
-             flag_mod = if_else(flag == "notes for row", flag, paste0(flag, " (", col, "; ", col.name, ")"))) %>%
+             flag_mod = if_else(flag == "notes for row", flag, stri_join(flag, " (", col, "; ", col.name, ")"))) %>%
       group_by(row) %>%
       filter(flag != "notes for row") %>%
-      summarize(row_flag = paste(flag_mod, collapse = "; "))
+      summarize(row_flag = stri_join(flag_mod, collapse = "; "))
 
     dfs[[df]]$cleaning_flags <- ""
     dfs[[df]]$cleaning_flags[flag.table$row] <- flag.table$row_flag
@@ -340,7 +340,7 @@ get_event_labels <- function() {
 
   labs <- lapply(seq(nrow(event)), function(x) {
 
-    paste0("Site Name: ",
+    stri_join("Site Name: ",
            pull(event[x, "SiteName"]),
            "<br>Concurrent Sampling Site: ",
            pull(event[x, "ConcurrentSamplingSite"])
