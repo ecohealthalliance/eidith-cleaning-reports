@@ -193,20 +193,13 @@ get_event_mismatch <- function(dat){
 get_specimen_mismatch <- function(dat){
 
   lookup <- read_csv(here::here("specimen_lookup.csv"))
+
   specimen_lookup <- lookup %>% filter(type != "storage medium") %>% select(-type) %>% rename(full_specimen = full)
   medium_lookup <- lookup %>% filter(type == "storage medium") %>% select(-type) %>% rename(full_medium = full)
 
   which_mismatch <- dat %>%
-    mutate(SpecimenID = str_split(SpecimenID, "\\."),
-           id = map(SpecimenID, ~.x[1]),
-           specimen_abbr = map(SpecimenID, function(x){
-             x[2] %>% str_sub(1,2)
-           }),
-           medium_abbr = map(SpecimenID, function(x){
-             x[2] %>% str_sub(3,3)
-           })
-    ) %>%
-    unnest(id, specimen_abbr, medium_abbr) %>%
+    extract(SpecimenID, into = c("id", "specimen_abbr", "medium_abbr"),
+            regex = "(\\w+)\\.(\\w{2})(\\w)") %>%
     left_join(specimen_lookup, by = c("specimen_abbr" = "code")) %>%
     left_join(medium_lookup, by = c("medium_abbr" = "code")) %>%
     mutate(ID_check = id == `Animal/Human ID`,
