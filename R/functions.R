@@ -283,30 +283,13 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
       arrange(row, col) %>%
       mutate(col.name = original.cols[col - 1],
              col = cellranger::num_to_letter(col),
-             flag_mod = paste0(flag, " (", col, "; ", col.name, ")")) %>%
+             flag_mod = if_else(flag == "notes for row", flag, paste0(flag, " (", col, "; ", col.name, ")"))) %>%
       group_by(row) %>%
       filter(flag != "notes for row") %>%
       summarize(row_flag = paste(flag_mod, collapse = "; "))
 
-    dfs[[df]]$cleaning_flags <-
-      sapply(1:nrow(dfs[[df]]), function(x)
-        ifelse(sum(flag.table$row == x) == 1, flag.table[flag.table$row == x, 2], "")
-      ) %>%
-      unlist()
-
-    rows.w.notes <- markup.dfs[[df]] %>%
-      filter(flag == "notes for row") %>%
-      pull(row) %>%
-      unique()
-
-    dfs[[df]]$cleaning_flags <-
-      sapply(1:nrow(dfs[[df]]), function(x)
-        ifelse(x %in% rows.w.notes,
-               paste0(dfs[[df]]$cleaning_flags[x], "; notes for row"),
-               dfs[[df]]$cleaning_flags[x]
-        )
-      ) %>%
-      stringi::stri_replace(., "", regex = "^; ")
+    dfs[[df]]$cleaning_flags <- ""
+    dfs[[df]]$cleaning_flags[flag.table$row] <- flag.table$row.flag
 
     dfs[[df]] <- select(dfs[[df]], cleaning_flags, original.cols)
 
@@ -413,7 +396,7 @@ get_event_icons <- function() {
                        "white", "gray", "darkpurple", "cadetblue",
                        "darkgreen", "darkred", "darkblue",
                        "lightgreen", "lightred", "lightblue"
-                       )
+  )
 
   # Generate a vector of colors based on the site factor level
 
