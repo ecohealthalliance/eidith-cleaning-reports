@@ -282,7 +282,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
       summarize(row_flag = paste(flag_mod, collapse = "; "))
 
     dfs[[df]]$cleaning_flags <- ""
-    dfs[[df]]$cleaning_flags[flag.table$row] <- flag.table$row.flag
+    dfs[[df]]$cleaning_flags[flag.table$row] <- flag.table$row_flag
 
     dfs[[df]] <- select(dfs[[df]], cleaning_flags, original.cols)
 
