@@ -77,7 +77,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
   dat_na_names <- dat %>%
     select_if(function(x) all(is.na(x))) %>%
     colnames()
-  dat_na <- tibble(key = dat_na_names, values = "all NA", count_missing = paste(nrow(dat), nrow(dat), sep = "/"))
+  dat_na <- tibble(key = dat_na_names, values = "all missing", count_missing = paste(nrow(dat), nrow(dat), sep = "/"))
 
   # together
   bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
@@ -93,7 +93,7 @@ get_na <- function(dat, cols_to_ignore = c()){
   # ID all NAs
   which_na = which(is.na(dat), arr.ind=TRUE) %>%
     as_tibble() %>%
-    mutate(flag = "NA",
+    mutate(flag = "missing value",
            fill = "red")
 
   # ignore columns that are 100% NA
@@ -272,18 +272,21 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
     markup.dfs[[df]]$col <- markup.dfs[[df]]$col + 1
 
+    # Save original column names
+
+    original.cols <- colnames(dfs[[df]])
+
     # Generate flag values for each relevant row of the dataframe and add these to the
     # data as a "cleaning_flags" column
 
     flag.table <- markup.dfs[[df]] %>%
       arrange(row, col) %>%
-      mutate(col = cellranger::num_to_letter(col),
-             flag_mod = paste0(flag, " (", col, ")")) %>%
+      mutate(col.name = original.cols[col - 1],
+             col = cellranger::num_to_letter(col),
+             flag_mod = paste0(flag, " (", col, "; ", col.name, ")")) %>%
       group_by(row) %>%
       filter(flag != "notes for row") %>%
       summarize(row_flag = paste(flag_mod, collapse = "; "))
-
-    original.cols <- colnames(dfs[[df]])
 
     dfs[[df]]$cleaning_flags <-
       sapply(1:nrow(dfs[[df]]), function(x)
@@ -306,6 +309,12 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
       stringi::stri_replace(., "", regex = "^; ")
 
     dfs[[df]] <- select(dfs[[df]], cleaning_flags, original.cols)
+
+    markup.dfs[[df]] <-
+      bind_rows(
+        markup.dfs[[df]],
+        expand.grid(row = which(dfs[[df]]$cleaning_flags != ""), col = 1,
+                    flag = "flag in row", fill = "lightpink"))
   }
 
   # Create workbook, generate the worksheets, save the dataframes to the worksheets

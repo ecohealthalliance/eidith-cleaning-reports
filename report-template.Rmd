@@ -6,7 +6,7 @@ author: "EcoHealth Alliance"
 date: "`r Sys.Date()`"
 output:
   html_document:
-    keep_md: true
+    keep_md: false
 ---
 
 ```{r setup, include = FALSE, message = FALSE, warning = FALSE}
