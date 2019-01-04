@@ -81,6 +81,21 @@ leaflet(data = event) %>%
   )
 
 ```
+<details>
+<summary>Site Names</summary>
+```{r site-names}
+event %>% 
+  group_by(SiteName) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(SiteName = stri_join(SiteName, " (", n, ")")) %>%
+  select(-n) %>%
+  kable(format = "html", escape = FALSE) %>%
+  kable_styling()
+
+```
+
+</details>
 
 <details>
 <summary>Event Summary</summary>
@@ -153,7 +168,7 @@ specimen.markup <- bind_rows(
   outlier_index,
   specimen_index,
   dup_id_index
-  )
+)
 
 ```
 
@@ -172,7 +187,7 @@ create_unique_table(specimen,
 markup_list <- list("event" = event.markup, 
                     "animal" = animal.markup, 
                     "specimen" = specimen.markup
-                    )
+)
 
 wb <- get_highlighted_wb(
   dfs = sapply(names(markup_list), get),
