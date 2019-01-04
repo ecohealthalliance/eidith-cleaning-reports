@@ -284,7 +284,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
       arrange(row, col) %>%
       mutate(col.name = original.cols[col - 1],
              col = cellcol_lookup[col],
-             flag_mod = stri_join(flag, " (", col, "; ", col.name, ")")
+             flag_mod = stri_join(flag, " (", col, ", ", col.name, ")")
       ) %>%
       group_by(row) %>%
       filter(flag != "notes for row") %>%
@@ -311,11 +311,12 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
     # Modify markup.df to result in special styling for any "cleaning_flags" cell that
     # contains a flag
 
-    markup.dfs[[df]] <-
-      bind_rows(
-        markup.dfs[[df]],
-        expand.grid(row = which(dfs[[df]]$cleaning_flags != ""), col = 1,
-                    flag = "flag in row", fill = "lightpink"))
+    new.markup.rows <- expand.grid(row = which(dfs[[df]]$cleaning_flags != ""), col = 1,
+                            flag = "flag in row", fill = "lightpink")
+    new.markup.rows$flag <- as.character(new.markup.rows$flag)
+    new.markup.rows$fill <- as.character(new.markup.rows$fill)
+
+    markup.dfs[[df]] <- bind_rows(markup.dfs[[df]], new.markup.rows)
   }
 
   # Create workbook, generate the worksheets, save the dataframes to the worksheets
@@ -387,25 +388,25 @@ get_event_icons <- function() {
   # with a column indicating the level of those unique values,
   # ensuring that "Independent Site" is always level 1
 
-  level.table <- event %>%
+  sites <- event %>%
     pull(ConcurrentSamplingSite) %>%
     sort() %>%
     factor()
 
-  if("Independent Site" %in% unique(event$ConcurrentSamplingSite)) {
+  if("Independent Site" %in% sites) sites <- relevel(sites, "Independent Site")
 
-    level.table <- relevel(level.table, "Independent Site")
-  }
-
-  level.table <- level.table %>%
+  level.table <- sites %>%
     levels() %>%
     data.frame() %>%
     mutate(site_factor_level = 1:n())
 
+  colnames(level.table)[1] <- "ConcurrentSamplingSite"
+
+  level.table$ConcurrentSamplingSite <- as.character(level.table$ConcurrentSamplingSite)
+
   # Join this information to the event table
 
-  event_mod <- left_join(event, level.table,
-                         by = c("ConcurrentSamplingSite" = "."))
+  event_mod <- left_join(event, level.table, by = c("ConcurrentSamplingSite"))
 
   # Colors allowed by awesomeIcons()
 
@@ -418,10 +419,7 @@ get_event_icons <- function() {
 
   # Generate a vector of colors based on the site factor level
 
-  colors <- sapply(seq(nrow(event_mod)), function(x)
-
-    possible.colors[pull(event_mod[x, "site_factor_level"])]
-  )
+  colors <- possible.colors[event_mod$site_factor_level]
 
   # Generate icons for plotting with leaflet
 
