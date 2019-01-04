@@ -24,6 +24,9 @@ walk(list.files(h("R/"), full.names = TRUE),
 country <- params$country
 
 ```
+
+<small>_Click on the_ ▶ _︎arrows to expand sections._</small>
+
 <details>
 <summary>Instructions - Read first!</summary>
 **How to use these reports?**
