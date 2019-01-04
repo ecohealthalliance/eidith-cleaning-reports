@@ -7,19 +7,19 @@ jobs:
     steps:
     - run:
         command: |
-          apt-get update && apt-get install -y --no-install-recommends libudunits2-dev
+          apt-get update && apt-get install -y --no-install-recommends libudunits2-dev libsodium-dev libssl-dev
     - checkout
     - restore_cache:
         keys:
-        - deps2-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml"
+        - deps3-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml"
           }}
-        - deps2-{{ .Branch }}
-        - deps2
+        - deps3-{{ .Branch }}
+        - deps3
     - run:
         command: |
           R -e "devtools::install_deps(dependencies=TRUE)"
     - save_cache:
-        key: deps2-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml"
+        key: deps3-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml"
           }}
         paths:
         - /usr/local/lib/R/site-library
@@ -31,7 +31,7 @@ jobs:
         destination: artifacts
     - run:
         command: |
-          ./deploy.sh
+          ./dropbox_upload.R
 workflows:
   version: 2
   workflow:

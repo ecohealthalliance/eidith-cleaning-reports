@@ -17,6 +17,7 @@ library(openxlsx)
 library(leaflet) 
 library(knitr)
 library(kableExtra)
+library(stringi)
 h <- here::here
 walk(list.files(h("R/"), full.names = TRUE),
      source, echo = FALSE, verbose = FALSE)
@@ -109,7 +110,7 @@ dup_id_index <- get_dups(animal, "AnimalID")
 
 # for excel output
 animal.markup <- bind_rows(
-  #na_index, 
+  na_index, 
   solo_index,
   outlier_index,
   dup_id_index)
@@ -142,13 +143,12 @@ outlier_index <- get_outlier(specimen)
 
 # check that EventName matches SiteName and EventDate
 specimen_index <- get_specimen_mismatch(specimen)
-
 # check ID dups 
 dup_id_index <- get_dups(specimen, "SpecimenID")
 
 # for excel output
 specimen.markup <- bind_rows(
-  #na_index, 
+  na_index, 
   solo_index,
   outlier_index,
   specimen_index,

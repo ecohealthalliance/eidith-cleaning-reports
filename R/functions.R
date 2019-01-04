@@ -10,11 +10,11 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
     if (!is.null(dat$Country)) {
       datlist <- split(dat, dat$Country)
       purrr::walk(datlist, function(z) {
-        file_out <- file.path(output_dir, paste0(x, "-", z$Country[1], ".tsv.gz"))
+        file_out <- file.path(output_dir, stri_join(x, "-", z$Country[1], ".tsv.gz"))
         readr::write_tsv(z, file_out)
       })
     } else {
-      file_out <- file.path(output_dir, paste0(x, ".tsv.gz"))
+      file_out <- file.path(output_dir, stri_join(x, ".tsv.gz"))
       readr::write_tsv(dat, file_out)
     }
   })
@@ -25,7 +25,7 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
 create_unique_table <- function(dat, cols_to_ignore = c()){
 
   # ignore specified columns (regex matching)
-  cols_to_ignore_regex <- paste(c(cols_to_ignore, "Latitude", "Longitude"), collapse = "|")
+  cols_to_ignore_regex <- stri_join(c(cols_to_ignore, "Latitude", "Longitude"), collapse = "|")
 
   dat <- dat %>% select(-matches(!!cols_to_ignore_regex))
 
@@ -39,8 +39,8 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
 
     sum_tbl <- table(clean_x)
 
-    paste0(unique_values, " (", sum_tbl, ")" ) %>%
-      paste(., collapse = "; ")
+    stri_join(unique_values, " (", sum_tbl, ")" ) %>%
+      stri_join(., collapse = "; ")
   }
 
   # character data
@@ -50,7 +50,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
     na.omit() %>%
     group_by(key) %>%
     summarize(values = collapse_mult(value),
-              count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+              count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
 
   # numeric data
   dat_num <- dat %>%
@@ -58,7 +58,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
     gather() %>%
     na.omit() %>%
     group_by(key) %>%
-    summarize(values = paste(min(value), max(value), sep = "-"), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+    summarize(values = stri_join(min(value), max(value), sep = "-"), count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
 
   # date data
   dat_date <- dat %>%
@@ -70,14 +70,14 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
       gather() %>%
       na.omit() %>%
       group_by(key) %>%
-      summarize(values = paste(min(value), max(value), sep = " to "), count_missing = paste(nrow(dat) - n(), nrow(dat), sep = "/"))
+      summarize(values = stri_join(min(value), max(value), sep = " to "), count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
   })
 
   # all na
   dat_na_names <- dat %>%
     select_if(function(x) all(is.na(x))) %>%
     colnames()
-  dat_na <- tibble(key = dat_na_names, values = "all missing", count_missing = paste(nrow(dat), nrow(dat), sep = "/"))
+  dat_na <- tibble(key = dat_na_names, values = "all missing", count_missing = stri_join(nrow(dat), nrow(dat), sep = "/"))
 
   # together
   bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
@@ -106,7 +106,7 @@ get_na <- function(dat, cols_to_ignore = c()){
   which_na <- which_na %>% filter(!col %in% all_na)
 
   # ignore other specified columns (regex matching)
-  cols_to_ignore_regex <- paste(cols_to_ignore, collapse = "|")
+  cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
 
   if(!is.null(cols_to_ignore)){
     col_names <- names(dat)[unique(which_na$col)]
@@ -198,20 +198,13 @@ get_event_mismatch <- function(dat){
 get_specimen_mismatch <- function(dat){
 
   lookup <- read_csv(here::here("specimen_lookup.csv"))
+
   specimen_lookup <- lookup %>% filter(type != "storage medium") %>% select(-type) %>% rename(full_specimen = full)
   medium_lookup <- lookup %>% filter(type == "storage medium") %>% select(-type) %>% rename(full_medium = full)
 
   which_mismatch <- dat %>%
-    mutate(SpecimenID = str_split(SpecimenID, "\\."),
-           id = map(SpecimenID, ~.x[1]),
-           specimen_abbr = map(SpecimenID, function(x){
-             x[2] %>% str_sub(1,2)
-           }),
-           medium_abbr = map(SpecimenID, function(x){
-             x[2] %>% str_sub(3,3)
-           })
-    ) %>%
-    unnest(id, specimen_abbr, medium_abbr) %>%
+    extract(SpecimenID, into = c("id", "specimen_abbr", "medium_abbr"),
+            regex = "^([^\\.]+)\\.(\\w{2})(\\w)", remove = FALSE) %>%
     left_join(specimen_lookup, by = c("specimen_abbr" = "code")) %>%
     left_join(medium_lookup, by = c("medium_abbr" = "code")) %>%
     mutate(ID_check = id == `Animal/Human ID`,
@@ -284,36 +277,39 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
     # Generate flag values for each relevant row of the dataframe and add these to the
     # data as a "cleaning_flags" column
 
+    # Generate initial flag values, ignoring "notes for row" since we want these to be the
+    # final flag listed in relevant rows
+
     flag.table <- markup.dfs[[df]] %>%
       arrange(row, col) %>%
       mutate(col.name = original.cols[col - 1],
-             col = cellranger::num_to_letter(col),
-             flag_mod = paste0(flag, " (", col, "; ", col.name, ")")) %>%
+             col = cellcol_lookup[col],
+             flag_mod = stri_join(flag, " (", col, "; ", col.name, ")")
+      ) %>%
       group_by(row) %>%
       filter(flag != "notes for row") %>%
-      summarize(row_flag = paste(flag_mod, collapse = "; "))
+      summarize(row_flag = stri_join(flag_mod, collapse = "; "))
 
-    dfs[[df]]$cleaning_flags <-
-      sapply(1:nrow(dfs[[df]]), function(x)
-        ifelse(sum(flag.table$row == x) == 1, flag.table[flag.table$row == x, 2], "")
-      ) %>%
-      unlist()
+    # Which rows need the addition of "notes for row" into the "cleaning_flag" column?
 
-    rows.w.notes <- markup.dfs[[df]] %>%
-      filter(flag == "notes for row") %>%
-      pull(row) %>%
-      unique()
+    rows.w.notes <- unique(get_cells_w_notes(dfs[[df]])$row)
 
-    dfs[[df]]$cleaning_flags <-
-      sapply(1:nrow(dfs[[df]]), function(x)
-        ifelse(x %in% rows.w.notes,
-               paste0(dfs[[df]]$cleaning_flags[x], "; notes for row"),
-               dfs[[df]]$cleaning_flags[x]
-        )
-      ) %>%
-      stringi::stri_replace(., "", regex = "^; ")
+    # Generate "cleaning_flags" column in the dataframe, pasting in "notes for row" to create
+    # final flag values for the relevant rows
+
+    dfs[[df]]$cleaning_flags <- ""
+    dfs[[df]]$cleaning_flags[flag.table$row] <- flag.table$row_flag
+    dfs[[df]]$cleaning_flags[rows.w.notes] <-
+      stri_join(dfs[[df]]$cleaning_flags[rows.w.notes], "notes for row", sep = "; ") %>%
+      stri_replace(., "", regex = "^; ")
+
+    # Reorder columns in the dataframe such that "cleaning_flags" appears first in the
+    # output workbook
 
     dfs[[df]] <- select(dfs[[df]], cleaning_flags, original.cols)
+
+    # Modify markup.df to result in special styling for any "cleaning_flags" cell that
+    # contains a flag
 
     markup.dfs[[df]] <-
       bind_rows(
@@ -369,7 +365,7 @@ get_event_labels <- function() {
 
   labs <- lapply(seq(nrow(event)), function(x) {
 
-    paste0("Site Name: ",
+    stri_join("Site Name: ",
            pull(event[x, "SiteName"]),
            "<br>Concurrent Sampling Site: ",
            pull(event[x, "ConcurrentSamplingSite"])
@@ -418,7 +414,7 @@ get_event_icons <- function() {
                        "white", "gray", "darkpurple", "cadetblue",
                        "darkgreen", "darkred", "darkblue",
                        "lightgreen", "lightred", "lightblue"
-                       )
+  )
 
   # Generate a vector of colors based on the site factor level
 
@@ -438,3 +434,7 @@ get_event_icons <- function() {
     )
   )
 }
+
+# Create a lookup table for Excel column lettering scheme
+
+cellcol_lookup <- cellranger::num_to_letter(1:2000)
