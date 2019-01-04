@@ -85,7 +85,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
     rename(field = key) %>%
     mutate(count_missing =
              cell_spec(count_missing, format = "html",
-                       background = ifelse(grepl("^0/", count_missing), "#FFFFFF", "#EA3C53")
+                       background = ifelse(grepl("^0/", count_missing), "#FFFFFF", "#EA8E9A")
              )
     ) %>%
     kable(format = "html", escape = FALSE) %>%
