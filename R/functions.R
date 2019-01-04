@@ -133,35 +133,34 @@ get_na <- function(dat, cols_to_ignore = c()){
 }
 
 # identify solo unique values
-get_solo_char <- function(dat) {
+get_solo_char <- function(dat, by_SiteName = TRUE) {
 
-  # for every column...
-  map_df(seq_along(dat), function(i) {
+  map_df(names(dat)[!names(dat) %in% "SiteName"], function(col_name) {
 
-    col_dat <- dat %>% pull(i)
+    sub_dat <- dat %>% select(SiteName, col_name)
+    col_dat <- sub_dat %>% pull(2)
 
     # if these criteria are met...
     if(class(col_dat)[1] == "character" &
        !all(is.na(col_dat)) &
-       !grepl("Notes|EventName|ID", colnames(dat[,i]), ignore.case = FALSE)) {
+       !grepl("Notes|Comment|EventName|SiteName|ID", col_name, ignore.case = FALSE)) {
 
       # summarize count by unique character string
-      col_tbl <- table(col_dat) %>% as_tibble()
+      cols <- c("SiteName", col_name)
+      if(!by_SiteName){cols <- cols[-1]}
 
-      # select character strings that occur only once
-      solo_vals <- col_tbl %>%
-        filter(n==1) %>%
-        pull(col_dat)
+      col_tbl <- sub_dat %>%
+        group_by_at(cols) %>%
+        count()
 
-      if(!(length(solo_vals) == 1 & solo_vals[1] == "")) {
+      solo_vals_match <- left_join(sub_dat, col_tbl)
 
-        solo_vals_match <- col_dat %in% solo_vals
+      which_solo <- tibble(row = which(solo_vals_match$n == 1),
+                           col = which(names(dat) == col_name),
+                           flag = ifelse(by_SiteName, "unique value within given SiteName", "unique value"),
+                           fill = "green")
 
-        which_solo <- tibble(row = which(solo_vals_match == TRUE), col = i,
-                             flag = "unique value", fill = "green")
-
-        return(which_solo)
-      }
+      return(which_solo)
     }
   })
 }
@@ -382,9 +381,9 @@ get_event_labels <- function() {
   labs <- lapply(seq(nrow(event)), function(x) {
 
     stri_join("Site Name: ",
-           pull(event[x, "SiteName"]),
-           "<br>Concurrent Sampling Site: ",
-           pull(event[x, "ConcurrentSamplingSite"])
+              pull(event[x, "SiteName"]),
+              "<br>Concurrent Sampling Site: ",
+              pull(event[x, "ConcurrentSamplingSite"])
     )
   })
 

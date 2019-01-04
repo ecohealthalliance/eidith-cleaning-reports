@@ -52,7 +52,7 @@ event <- read_tsv(h("raw-eidith-data", paste0("Event-", country, ".tsv.gz")),  c
 na_index <- get_na(event, cols_to_ignore = c("Notes"))
 
 # check for solo chars
-solo_index <- get_solo_char(event)
+solo_index <- get_solo_char(event, by_SiteName = FALSE)
 
 # check for numeric outliers (not including lat/long)
 outlier_index <- get_outlier(event)
@@ -115,7 +115,7 @@ animal <- read_tsv(h("raw-eidith-data",  paste0("Animal-", country, ".tsv.gz")),
 na_index <- get_na(animal, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species"))
 
 # check for solo chars
-solo_index <- get_solo_char(animal)
+solo_index <- get_solo_char(animal, by_SiteName = TRUE)
 
 # check for numeric outliers (not including lat/long)
 outlier_index <- get_outlier(animal)
@@ -151,7 +151,7 @@ specimen <- read_tsv(h("raw-eidith-data", paste0("Specimen-", country, ".tsv.gz"
 na_index <- get_na(specimen, cols_to_ignore = c("Notes", "Comment", "humans only"))
 
 # check for solo chars
-solo_index <- get_solo_char(specimen)
+solo_index <- get_solo_char(specimen, by_SiteName = TRUE)
 
 # check for numeric outliers (not including lat/long)
 outlier_index <- get_outlier(specimen)
