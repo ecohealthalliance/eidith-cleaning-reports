@@ -18,7 +18,12 @@ Depends:
     assertthat,
     stringi,
     cellranger,
-    htmltools
+    htmltools,
+    cyphr,
+    sodium,
+    rdrop2,
+    base64enc
 Remotes:
     ecohealthalliance/eidith,
-    noamross/openxlsx
+    noamross/openxlsx,
+    ropensci/cyphr
