@@ -272,19 +272,39 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
     # Generate flag values for each relevant row of the dataframe and add these to the
     # data as a "cleaning_flags" column
 
+    # Generate initial flag values, ignoring "notes for row" since we want these to be the
+    # final flag listed in relevant rows
+
     flag.table <- markup.dfs[[df]] %>%
       arrange(row, col) %>%
       mutate(col.name = original.cols[col - 1],
              col = cellcol_lookup[col],
-             flag_mod = if_else(flag == "notes for row", flag, stri_join(flag, " (", col, "; ", col.name, ")"))) %>%
+             flag_mod = stri_join(flag, " (", col, "; ", col.name, ")")
+      ) %>%
       group_by(row) %>%
       filter(flag != "notes for row") %>%
       summarize(row_flag = stri_join(flag_mod, collapse = "; "))
 
+    # Which rows need the addition of "notes for row" into the "cleaning_flag" column?
+
+    rows.w.notes <- unique(get_cells_w_notes(dfs[[df]])$row)
+
+    # Generate "cleaning_flags" column in the dataframe, pasting in "notes for row" to create
+    # final flag values for the relevant rows
+
     dfs[[df]]$cleaning_flags <- ""
     dfs[[df]]$cleaning_flags[flag.table$row] <- flag.table$row_flag
+    dfs[[df]]$cleaning_flags[rows.w.notes] <-
+      stri_join(dfs[[df]]$cleaning_flags[rows.w.notes], "notes for row", sep = "; ") %>%
+      stri_replace(., "", regex = "^; ")
+
+    # Reorder columns in the dataframe such that "cleaning_flags" appears first in the
+    # output workbook
 
     dfs[[df]] <- select(dfs[[df]], cleaning_flags, original.cols)
+
+    # Modify markup.df to result in special styling for any "cleaning_flags" cell that
+    # contains a flag
 
     markup.dfs[[df]] <-
       bind_rows(
@@ -409,5 +429,7 @@ get_event_icons <- function() {
     )
   )
 }
+
+# Create a lookup table for Excel column lettering scheme
 
 cellcol_lookup <- cellranger::num_to_letter(1:2000)
