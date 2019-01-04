@@ -80,13 +80,28 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
   dat_na <- tibble(key = dat_na_names, values = "all missing", count_missing = stri_join(nrow(dat), nrow(dat), sep = "/"))
 
   # together
+
+  mm.measures <- c("BatEarHeight", "BatTailLength", "BatHindFoodLength",
+                   "BatForearmLength", "BatHeadBodyLength", "NHPBodyLength",
+                   "NHPHeadWidth", "NHPHeadLength", "NHPRightEarWidth",
+                   "NHPLeftEarWidth", "NHPRightEarHeight", "NHPLeftEarHeight",
+                   "RodentOtherRightEarHeight", "RodentOtherTailLength",
+                   "RodentOtherRHindFoot", "RodentOtherBodyLength")
+
+  g.measures <- c("BatWeight", "NHPWeight", "RodentOtherWeight")
+
   bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
     arrange(factor(key, levels = colnames(dat))) %>%
     rename(field = key) %>%
     mutate(count_missing =
              cell_spec(count_missing, format = "html",
                        background = ifelse(grepl("^0/", count_missing), "#FFFFFF", "#EA8E9A")
-             )
+             ),
+           field = case_when(
+             field %in% mm.measures ~ stri_join(field, " (mm)"),
+             field %in% g.measures ~ stri_join(field, " (g)"),
+             TRUE ~ field
+           )
     ) %>%
     kable(format = "html", escape = FALSE) %>%
     kable_styling()
