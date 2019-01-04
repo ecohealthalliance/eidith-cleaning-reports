@@ -198,8 +198,8 @@ get_specimen_mismatch <- function(dat){
   medium_lookup <- lookup %>% filter(type == "storage medium") %>% select(-type) %>% rename(full_medium = full)
 
   which_mismatch <- dat %>%
-    extract(SpecimenID, into = c("id", "specimen_abbr", "medium_abbr"),
-            regex = "([^\\.])\\.(\\w{2})(\\w)") %>%
+    tidyr::extract(SpecimenID, into = c("id", "specimen_abbr", "medium_abbr"),
+            regex = "^([^\\.]+)\\.(\\w{2})(\\w)", remove = FALSE) %>%
     left_join(specimen_lookup, by = c("specimen_abbr" = "code")) %>%
     left_join(medium_lookup, by = c("medium_abbr" = "code")) %>%
     mutate(ID_check = id == `Animal/Human ID`,
