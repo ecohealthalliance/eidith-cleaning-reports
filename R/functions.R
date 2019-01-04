@@ -199,7 +199,7 @@ get_specimen_mismatch <- function(dat){
 
   which_mismatch <- dat %>%
     extract(SpecimenID, into = c("id", "specimen_abbr", "medium_abbr"),
-            regex = "(\\w+)\\.(\\w{2})(\\w)") %>%
+            regex = "([^\\.])\\.(\\w{2})(\\w)") %>%
     left_join(specimen_lookup, by = c("specimen_abbr" = "code")) %>%
     left_join(medium_lookup, by = c("medium_abbr" = "code")) %>%
     mutate(ID_check = id == `Animal/Human ID`,
