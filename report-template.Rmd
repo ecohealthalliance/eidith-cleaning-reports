@@ -92,32 +92,32 @@ are correct.
             EIDITH value of 21mm with your field data sheet to confirm
             the correct length that was measured.   
   
-    -   **“All missing”** is written if a column has no values entered.
+    -   **“All empty”** is written if a column has no values entered.
         Please **confirm that it makes sense that you didn’t enter data
         for that column**. For example, if you never had a sick animal
         that you sampled, then it might make sense that the column for
-        “ClinicalSignsOther” is all missing. Whereas a column like
-        Country should never be all missing.
+        “ClinicalSignsOther” is all empty. Whereas a column like
+        Country should never be all empty.
 
--   *Count\_missing:* this is the number of rows that do not have a
+-   *Count\_empty:* this is the number of rows that do not have a
     value for that column. In general, you will want to double check the
-    columns that have missing values to confirm whether you need to make
-    corrections. Counts with zeros in the numerator indicate no missing
+    columns that have empty values to confirm whether you need to make
+    corrections. Counts with zeros in the numerator indicate no empty
     values.
 
-    -   Sometimes it makes sense that you have mostly missing data. For
+    -   Sometimes it makes sense that you have mostly empty data. For
         example:
 
         -   If it says 165/165, then the values column will corroborate
-            that and say “all missing”.
+            that and say “all empty”.
 
-        -   If you only responded to one outbreak, count\_missing might
+        -   If you only responded to one outbreak, count\_empty might
             be 160/165, which means that only 5 outbreak events were
             noted, which probably makes sense.
 
-    -   In other cases, missing values point to an error. For example,
-        if you have 2/165 missing from the Season column, you will need
-        to make corrections for those 2 rows that are missing their
+    -   In other cases, empty values point to an error. For example,
+        if you have 2/165 empty from the Season column, you will need
+        to make corrections for those 2 rows that are empty their
         Season.
 
 **Excel file report:**
@@ -138,8 +138,8 @@ issue needs to be checked and the column name (and column letter) that
 needs to be checked in that row – be sure to check if the text is
 wrapped by hitting the down arrow in the corner of the function bar (see
 below) so you don’t miss any data to check.  
-![](./media/image1.png){width="3.388888888888889in"
-height="1.2777777777777777in"}
+![](./media/image1.png){width="4in"
+height="1.3in"}
 
 In addition to noting the issues in the cleaning\_flags column, cells
 with values that need to be checked are colored:
@@ -160,14 +160,14 @@ with values that need to be checked are colored:
             in the Excel file – though you should see it in the list of
             unique values on the html file.
 
--   Red means no value was entered in that row (it is missing):
+-   Gray means no value was entered in that row (it is empty):
 
     -   Please check to confirm whether you have data for that row to
         update EIDITH.
 
-    -   Note, that if all of the cells are missing data, it is not
+    -   Note, that if all of the cells are empty data, it is not
         highlighted here, but you can see that on the html sheet (where
-        it will say all missing).
+        it will say all empty).
 
 -   The whole row is light green:
 
@@ -235,8 +235,8 @@ using the following steps. See the example image below.
     and <rostal@ecohealthalliance.org>. Indicate in the email which
     sheets have changes.
 
-![](./media/image3.png){width="4.402777777777778in"
-height="3.861111111111111in"}  
+![](./media/image3.png){width="4.5in"
+height="3.8in"}  
 
 </details>
 ```{r event}
@@ -245,7 +245,7 @@ event <- read_tsv(h("raw-eidith-data", paste0("Event-", country, ".tsv.gz")),  c
 ## for excel-------
 
 # check for NAs
-na_index <- get_na(event, cols_to_ignore = c("Notes"))
+na_index <- get_empty(event, cols_to_ignore = c("Notes"))
 
 # check for solo chars
 solo_index <- get_solo_char(event, by_SiteName = FALSE)
@@ -308,7 +308,7 @@ animal <- read_tsv(h("raw-eidith-data",  paste0("Animal-", country, ".tsv.gz")),
 ## for excel-------
 
 # check for NAs
-na_index <- get_na(animal, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species"))
+na_index <- get_empty(animal, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species"))
 
 # check for solo chars
 solo_index <- get_solo_char(animal, by_SiteName = TRUE)
@@ -344,7 +344,7 @@ specimen <- read_tsv(h("raw-eidith-data", paste0("Specimen-", country, ".tsv.gz"
 ## for excel-------
 
 # check for NAs
-na_index <- get_na(specimen, cols_to_ignore = c("Notes", "Comment", "humans only"))
+na_index <- get_empty(specimen, cols_to_ignore = c("Notes", "Comment", "humans only"))
 
 # check for solo chars
 solo_index <- get_solo_char(specimen, by_SiteName = TRUE)

@@ -50,7 +50,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
     na.omit() %>%
     group_by(key) %>%
     summarize(values = collapse_mult(value),
-              count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
+              count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
 
   # numeric data
   dat_num <- dat %>%
@@ -58,7 +58,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
     gather() %>%
     na.omit() %>%
     group_by(key) %>%
-    summarize(values = stri_join(min(value), max(value), sep = "-"), count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
+    summarize(values = stri_join(min(value), max(value), sep = "-"), count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
 
   # date data
   dat_date <- dat %>%
@@ -70,14 +70,14 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
       gather() %>%
       na.omit() %>%
       group_by(key) %>%
-      summarize(values = stri_join(min(value), max(value), sep = " to "), count_missing = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
+      summarize(values = stri_join(min(value), max(value), sep = " to "), count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
   })
 
   # all na
   dat_na_names <- dat %>%
     select_if(function(x) all(is.na(x))) %>%
     colnames()
-  dat_na <- tibble(key = dat_na_names, values = "all missing", count_missing = stri_join(nrow(dat), nrow(dat), sep = "/"))
+  dat_na <- tibble(key = dat_na_names, values = "all empty", count_empty = stri_join(nrow(dat), nrow(dat), sep = "/"))
 
   # together
 
@@ -93,9 +93,9 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
   bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
     arrange(factor(key, levels = colnames(dat))) %>%
     rename(field = key) %>%
-    mutate(count_missing =
-             cell_spec(count_missing, format = "html",
-                       background = ifelse(grepl("^0/", count_missing), "#FFFFFF", "#EA8E9A")
+    mutate(count_empty =
+             cell_spec(count_empty, format = "html",
+                       background = ifelse(grepl("^0/", count_empty), "#FFFFFF", "#EA8E9A")
              ),
            field = case_when(
              field %in% mm.measures ~ stri_join(field, " (mm)"),
@@ -107,14 +107,14 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
     kable_styling()
 }
 
-# identify NA cells
-get_na <- function(dat, cols_to_ignore = c()){
+# identify empty cells
+get_empty <- function(dat, cols_to_ignore = c()){
 
   # ID all NAs
   which_na = which(is.na(dat), arr.ind=TRUE) %>%
     as_tibble() %>%
-    mutate(flag = "missing value",
-           fill = "red")
+    mutate(flag = "empty value",
+           fill = "gray")
 
   # ignore columns that are 100% NA
   all_na <- which(apply(dat, 2, function(x){all(is.na(x))}))
