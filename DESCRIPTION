@@ -4,7 +4,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-URL: https://github.com/ecohealthalliancce/eidith
+URL: https://github.com/ecohealthalliance/eidith-cleaning-reports
 Depends:
     rmarkdown,
     eidith,

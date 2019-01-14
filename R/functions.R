@@ -326,7 +326,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
     # contains a flag
 
     new.markup.rows <- expand.grid(row = which(dfs[[df]]$cleaning_flags != ""), col = 1,
-                            flag = "flag in row", fill = "lightpink")
+                                   flag = "flag in row", fill = "lightpink")
     new.markup.rows$flag <- as.character(new.markup.rows$flag)
     new.markup.rows$fill <- as.character(new.markup.rows$fill)
 
