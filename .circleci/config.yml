@@ -49,6 +49,9 @@ jobs:
     - store_artifacts:
         path: /root/main/outputs/
         destination: artifacts
+    - store_artifacts:
+        path: /root/main/raw-eidith-data/
+        destination: raw-eidith-data
     - run: ./dropbox_upload.R
 
 workflows:
