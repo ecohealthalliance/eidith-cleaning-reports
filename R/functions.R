@@ -143,7 +143,7 @@ get_solo_char <- function(dat, by_SiteName = TRUE) {
     # if these criteria are met...
     if(class(col_dat)[1] == "character" &
        !all(is.na(col_dat)) &
-       !grepl("Notes|Comment|EventName|SiteName|ID", col_name, ignore.case = FALSE)) {
+       !grepl("Notes|Comment|EventName|SiteName|ID|Taxa|Class|Order|Family|Genus|Species", col_name, ignore.case = FALSE)) {
 
       # summarize count by unique character string
       cols <- c("SiteName", col_name)
