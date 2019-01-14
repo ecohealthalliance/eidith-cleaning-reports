@@ -179,7 +179,7 @@ with values that need to be checked are colored:
         incorrectly and needs to be changed.
 
 -   Purple means there is a duplicate value for something that should be
-    unique (i.e., EventName, Animal\_ID, Specimen\_ID)
+    unique (i.e., EventName, Animal\_ID, Specimen\_ID, ParticipantID)
 
 -   Orange means that the event name does not match the site name and
     date or that the specimen name does not match the indicated sample
@@ -357,6 +357,7 @@ outlier_index <- get_outlier(specimen)
 
 # check that EventName matches SiteName and EventDate
 specimen_index <- get_specimen_mismatch(specimen)
+
 # check ID dups 
 dup_id_index <- get_dups(specimen, "SpecimenID")
 
@@ -380,12 +381,50 @@ create_unique_table(specimen,
 ```
 </details>
 
+```{r human}
+
+human <- read_tsv(h("raw-eidith-data", paste0("Human-", country, ".tsv.gz")), col_types = specimen_specs)
+
+## for excel-------
+
+# check for NAs
+na_index <- get_empty(human, cols_to_ignore = c("Notes", "Comment"))
+
+# check for solo chars
+solo_index <- get_solo_char(human, by_SiteName = TRUE)
+
+# check for numeric outliers (not including lat/long)
+outlier_index <- get_outlier(human)
+
+# check ID dups 
+dup_id_index <- get_dups(human, "Q1 ParticipantID")
+
+# for excel output
+human.markup <- bind_rows(
+  na_index, 
+  solo_index,
+  outlier_index,
+  dup_id_index
+)
+
+```
+
+<details>
+<summary>Human Summary</summary>
+```{r human-unique}
+# unique character values table
+create_unique_table(human,
+                    cols_to_ignore = c("Notes", "Comment", "SiteName", "EventName", "ParticipantID"))
+```
+</details>
+
 ```{r style-xlsx-table, include = FALSE}
 
 # Get highlighted workbook object
 markup_list <- list("event" = event.markup, 
                     "animal" = animal.markup, 
-                    "specimen" = specimen.markup
+                    "specimen" = specimen.markup,
+                    "human" = human.markup
 )
 
 wb <- get_highlighted_wb(
