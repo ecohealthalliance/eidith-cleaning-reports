@@ -24,6 +24,10 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
 # create unique values table
 create_unique_table <- function(dat, cols_to_ignore = c()){
 
+  # check if null
+  if(is.null(dat)){
+    return(kable("No data in EIDITH", col.names = ""))
+  }
   # ignore specified columns (regex matching)
   cols_to_ignore_regex <- stri_join(c(cols_to_ignore, "Latitude", "Longitude"), collapse = "|")
 

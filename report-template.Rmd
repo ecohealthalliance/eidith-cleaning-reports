@@ -58,70 +58,70 @@ are correct.
 *Summary Tables:*
 
 -   *Field*: refers to each column in the EIDITH table. The following
-    columns are not summarized in these tables: latitude/longitude,
-    notes/comments, event name, and ID fields.
+columns are not summarized in these tables: latitude/longitude,
+notes/comments, event name, and ID fields.
 
 -   *Values*: a summary of values that were entered into EIDITH
 
-    -   **Character fields** (e.g. Season) contain the unique text along
-        with the number of times each value was given.
+-   **Character fields** (e.g. Season) contain the unique text along
+with the number of times each value was given.
 
-        -   Please confirm the **spelling** is correct and check
-            **whether any fields should be combined**. For example. if
-            you have the following interfaces: in house (1); IN HUMAN
-            DWELLING (43); in human dwelling (108), you know that the
-            correct interface is: “in human dwelling” (you can confirm
-            that on the EIDITH data entry app), so the other interfaces
-            need to be corrected. Note, if you collected data during
-            Year 1 or before the app was fully developed, you will have
-            more corrections to make.
+-   Please confirm the **spelling** is correct and check
+**whether any fields should be combined**. For example. if
+you have the following interfaces: in house (1); IN HUMAN
+DWELLING (43); in human dwelling (108), you know that the
+correct interface is: “in human dwelling” (you can confirm
+that on the EIDITH data entry app), so the other interfaces
+need to be corrected. Note, if you collected data during
+Year 1 or before the app was fully developed, you will have
+more corrections to make.
 
-        -   Keep an eye out for **values that were only entered a few
-            times**. For example, if you have the following for
-            drinkingWaterShared: no (154); unknown (8); yes (2), you may
-            want to confirm that there were two events/sites that truly
-            have shared drinking water, or whether that was a mistake
-            and all of them should be no/unknown.
+-   Keep an eye out for **values that were only entered a few
+times**. For example, if you have the following for
+drinkingWaterShared: no (154); unknown (8); yes (2), you may
+want to confirm that there were two events/sites that truly
+have shared drinking water, or whether that was a mistake
+and all of them should be no/unknown.
 
-    -   **Numeric and Date fields** (e.g. DurationDays) contain the
-        entire range for all values in that column (e.g. 2-27).
+-   **Numeric and Date fields** (e.g. DurationDays) contain the
+entire range for all values in that column (e.g. 2-27).
 
-        -   You are the best person to judge if that **range is
-            reasonable** for your sites/animals. For example, if in your
-            country/at your sites the only bats in the area are from two
-            species of large fruit bats (say the typical arm length for
-            both species is 140-160mm), and the range of the arm length
-            on the html table is 21-160mm, then you should compare the
-            EIDITH value of 21mm with your field data sheet to confirm
-            the correct length that was measured.   
-  
-    -   **“All empty”** is written if a column has no values entered.
-        Please **confirm that it makes sense that you didn’t enter data
-        for that column**. For example, if you never had a sick animal
-        that you sampled, then it might make sense that the column for
-        “ClinicalSignsOther” is all empty. Whereas a column like
-        Country should never be all empty.
+-   You are the best person to judge if that **range is
+reasonable** for your sites/animals. For example, if in your
+country/at your sites the only bats in the area are from two
+species of large fruit bats (say the typical arm length for
+both species is 140-160mm), and the range of the arm length
+on the html table is 21-160mm, then you should compare the
+EIDITH value of 21mm with your field data sheet to confirm
+the correct length that was measured.   
+
+-   **“All empty”** is written if a column has no values entered.
+Please **confirm that it makes sense that you didn’t enter data
+for that column**. For example, if you never had a sick animal
+that you sampled, then it might make sense that the column for
+“ClinicalSignsOther” is all empty. Whereas a column like
+Country should never be all empty.
 
 -   *Count\_empty:* this is the number of rows that do not have a
-    value for that column. In general, you will want to double check the
-    columns that have empty values to confirm whether you need to make
-    corrections. Counts with zeros in the numerator indicate no empty
-    values.
+value for that column. In general, you will want to double check the
+columns that have empty values to confirm whether you need to make
+corrections. Counts with zeros in the numerator indicate no empty
+values.
 
-    -   Sometimes it makes sense that you have mostly empty data. For
-        example:
+-   Sometimes it makes sense that you have mostly empty data. For
+example:
 
-        -   If it says 165/165, then the values column will corroborate
-            that and say “all empty”.
+-   If it says 165/165, then the values column will corroborate
+that and say “all empty”.
 
-        -   If you only responded to one outbreak, count\_empty might
-            be 160/165, which means that only 5 outbreak events were
-            noted, which probably makes sense.
+-   If you only responded to one outbreak, count\_empty might
+be 160/165, which means that only 5 outbreak events were
+noted, which probably makes sense.
 
-    -   In other cases, empty values point to an error. For example,
-        if you have 2/165 empty from the Season column, you will need
-        to make corrections for those 2 rows that are empty their
-        Season.
+-   In other cases, empty values point to an error. For example,
+if you have 2/165 empty from the Season column, you will need
+to make corrections for those 2 rows that are empty their
+Season.
 
 **Excel file report:**
 
@@ -149,65 +149,65 @@ with values that need to be checked are colored:
 
 -   Bright green means it is a unique value.
 
-    -   On the event table, values are highlighted if they are unique
-        within the *entire* table. On all other tables, values are
-        highlighted if they are unique for the given *site name. *
+-   On the event table, values are highlighted if they are unique
+within the *entire* table. On all other tables, values are
+highlighted if they are unique for the given *site name. *
 
-    -   A unique value may be fine (e.g., an independent site that was
-        only visited one time at the start of PREDICT 2), or it could
-        indicate a mistake (e.g. in Season if it is spelled “Dri”
-        instead of “Dry”).
+-   A unique value may be fine (e.g., an independent site that was
+only visited one time at the start of PREDICT 2), or it could
+indicate a mistake (e.g. in Season if it is spelled “Dri”
+instead of “Dry”).
 
-        -   While the system will pick up these misspellings, if you
-            spell it wrong multiple times it won’t show up as an issue
-            in the Excel file – though you should see it in the list of
-            unique values on the html file.
+-   While the system will pick up these misspellings, if you
+spell it wrong multiple times it won’t show up as an issue
+in the Excel file – though you should see it in the list of
+unique values on the html file.
 
 -   Gray means no value was entered in that row (it is empty):
 
-    -   Please check to confirm whether you have data for that row to
-        update EIDITH.
+-   Please check to confirm whether you have data for that row to
+update EIDITH.
 
-    -   Note, that if all of the cells are empty data, it is not
-        highlighted here, but you can see that on the html sheet (where
-        it will say all empty).
+-   Note, that if all of the cells are empty data, it is not
+highlighted here, but you can see that on the html sheet (where
+it will say all empty).
 
 -   The whole row is light green:
 
-    -   This means that there were notes given for this entry. **Always
-        check all notes**, in case you noted that something was recorded
-        incorrectly and needs to be changed.
+-   This means that there were notes given for this entry. **Always
+check all notes**, in case you noted that something was recorded
+incorrectly and needs to be changed.
 
 -   Purple means there is a duplicate value for something that should be
-    unique (i.e., EventName, Animal\_ID, Specimen\_ID, ParticipantID)
+unique (i.e., EventName, Animal\_ID, Specimen\_ID, ParticipantID)
 
 -   Orange means that the event name does not match the site name and
-    date or that the specimen name does not match the indicated sample
-    type or medium (based on the original definitions at the launch of
-    the EIDITH App). If you were collecting samples before the naming
-    became standardized, you will notice many issues.
+date or that the specimen name does not match the indicated sample
+type or medium (based on the original definitions at the launch of
+the EIDITH App). If you were collecting samples before the naming
+became standardized, you will notice many issues.
 
-    -   Please confirm with the field data that the specimen type and
-        medium are correct in EIDITH.
+-   Please confirm with the field data that the specimen type and
+medium are correct in EIDITH.
 
-    -   **DO NOT change specimen IDs to match the EIDITH format IF THE
-        TUBE STILL HAS THE ORIGINAL ID!** In this case, we will leave
-        the ID as it was given originally in order to be able to match
-        the samples with the metadata. If you note that the ID entered
-        into EIDITH is actually incorrect from what is written on the
-        tube in your freezers, then you can change it.
+-   **DO NOT change specimen IDs to match the EIDITH format IF THE
+TUBE STILL HAS THE ORIGINAL ID!** In this case, we will leave
+the ID as it was given originally in order to be able to match
+the samples with the metadata. If you note that the ID entered
+into EIDITH is actually incorrect from what is written on the
+tube in your freezers, then you can change it.
 
 -   Yellow means that the value is a numeric outlier, defined as greater
-    than the 75th percentile + 2.5 \* inter-quartile range (IQR) or less
-    than the 25th percentile - 2.5 \* IQR.
+than the 75th percentile + 2.5 \* inter-quartile range (IQR) or less
+than the 25th percentile - 2.5 \* IQR.
 
 -   To facilitate the cleaning please make use of the filter buttons
 
-    -   You can filter the cleaning\_flag column to remove the blanks
-        and see all of the rows with values that need to be checked
+-   You can filter the cleaning\_flag column to remove the blanks
+and see all of the rows with values that need to be checked
 
-    -   You can also filter each of the columns by color, so if you just
-        want to see the unique values, you can filter by bright green
+-   You can also filter each of the columns by color, so if you just
+want to see the unique values, you can filter by bright green
 
 **Making and submitting corrections:**
 
@@ -215,18 +215,18 @@ If you need to make a correction, you can edit the provided Excel sheet
 using the following steps. See the example image below.
 
 1.  In Excel, insert a column to the right of the data that needs to be
-    changed and give it the heading "change to:". Change the heading
-    text to red.
+changed and give it the heading "change to:". Change the heading
+text to red.
 
 2.  Leave the original data as it is and enter what you want the data
-    changed to in the newly inserted column. Highlight the new values in
-    red also.
+changed to in the newly inserted column. Highlight the new values in
+red also.
 
 3.  If updating data that contains multiple values, in the "change to:"
-    column enter the values as they should appear once the updates are
-    complete. For example, if the Insect Vectors column currently shows
-    "mosquito; tick" and you want to add sand fly, enter "mosquito; sand
-    fly; tick" in the newly inserted column.
+column enter the values as they should appear once the updates are
+complete. For example, if the Insect Vectors column currently shows
+"mosquito; tick" and you want to add sand fly, enter "mosquito; sand
+fly; tick" in the newly inserted column.
 
 4.  Do the same for every column of data that needs changing.
 
@@ -235,43 +235,30 @@ using the following steps. See the example image below.
 6.  Save the file it as an .xls file to retain the formatting.
 
 7.  Send the file to <technology@eidith.org> and CC your country liason
-    and <rostal@ecohealthalliance.org>. Indicate in the email which
-    sheets have changes.
+and <rostal@ecohealthalliance.org>. Indicate in the email which
+sheets have changes.
 
 ![](./media/image3.png){width="4.5in"
 height="3.8in"}  
 
 </details>
-```{r event}
-event <- read_tsv(h("raw-eidith-data", paste0("Event-", country, ".tsv.gz")),  col_types = event_specs)
+```{r read-data}
+table_names <- c("Event", "Animal", "Specimen", "Human")
 
-## for excel-------
+tables <- map(table_names, function(tab){
+  out <- try(read_tsv(h("raw-eidith-data", paste0(tab, "-", country, ".tsv.gz")),  col_types = get(paste(tolower(tab), "specs", sep="_"))), silent=TRUE)
+  
+  if(class(out)[1] == "try-error"){out <- NULL}
+  
+  return(out)
+})
 
-# check for NAs
-na_index <- get_empty(event, cols_to_ignore = c("Notes"))
-
-# check for solo chars
-solo_index <- get_solo_char(event, by_SiteName = FALSE)
-
-# check for numeric outliers (not including lat/long)
-outlier_index <- get_outlier(event)
-
-# check that EventName matches SiteName and EventDate
-event_index <- get_event_mismatch(event)
-
-# check ID dups 
-dup_id_index <- get_dups(event, "EventName")
-
-# for excel output
-event.markup <- bind_rows(na_index,
-                          solo_index, 
-                          outlier_index,
-                          event_index,
-                          dup_id_index)
+names(tables) <- tolower(table_names)
 ```
 
 ```{r event-site-map}
 # map site locations 
+event <- tables[["event"]]
 leaflet(data = event) %>%
   addTiles() %>%
   addAwesomeMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, 
@@ -280,6 +267,7 @@ leaflet(data = event) %>%
   )
 
 ```
+
 <details>
 <summary>Site Names</summary>
 ```{r site-names}
@@ -293,7 +281,6 @@ event %>%
   kable_styling()
 
 ```
-
 </details>
 
 <details>
@@ -304,129 +291,96 @@ create_unique_table(event, cols_to_ignore = c("EventName", "SiteName", "Notes", 
 ```
 </details>
 
-```{r animal}
-
-animal <- read_tsv(h("raw-eidith-data",  paste0("Animal-", country, ".tsv.gz")), col_types = animal_specs) 
-
-## for excel-------
-
-# check for NAs
-na_index <- get_empty(animal, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species"))
-
-# check for solo chars
-solo_index <- get_solo_char(animal, by_SiteName = TRUE)
-
-# check for numeric outliers (not including lat/long)
-outlier_index <- get_outlier(animal)
-
-# check ID dups 
-dup_id_index <- get_dups(animal, "AnimalID")
-
-# for excel output
-animal.markup <- bind_rows(
-  na_index, 
-  solo_index,
-  outlier_index,
-  dup_id_index)
-
-```
-
 <details>
 <summary>Animal Summary</summary>
 ```{r animal-unique}
+animal <- tables[["animal"]]
+
 # unique character values table
 create_unique_table(animal,
                     cols_to_ignore = c("Notes", "Comment", "SiteName", "AnimalID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
 ```
 </details>
 
-```{r specimen}
-
-specimen <- read_tsv(h("raw-eidith-data", paste0("Specimen-", country, ".tsv.gz")), col_types = specimen_specs)
-
-## for excel-------
-
-# check for NAs
-na_index <- get_empty(specimen, cols_to_ignore = c("Notes", "Comment", "humans only"))
-
-# check for solo chars
-solo_index <- get_solo_char(specimen, by_SiteName = TRUE)
-
-# check for numeric outliers (not including lat/long)
-outlier_index <- get_outlier(specimen)
-
-# check that EventName matches SiteName and EventDate
-specimen_index <- get_specimen_mismatch(specimen)
-
-# check ID dups 
-dup_id_index <- get_dups(specimen, "SpecimenID")
-
-# for excel output
-specimen.markup <- bind_rows(
-  na_index, 
-  solo_index,
-  outlier_index,
-  specimen_index,
-  dup_id_index
-)
-
-```
-
 <details>
 <summary>Specimen Summary</summary>
 ```{r specimen-unique}
+specimen <- tables[["specimen"]]
+
 # unique character values table
 create_unique_table(specimen,
                     cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
 ```
 </details>
 
-```{r human}
-
-human <- read_tsv(h("raw-eidith-data", paste0("Human-", country, ".tsv.gz")), col_types = specimen_specs)
-
-## for excel-------
-
-# check for NAs
-na_index <- get_empty(human, cols_to_ignore = c("Notes", "Comment"))
-
-# check for solo chars
-solo_index <- get_solo_char(human, by_SiteName = TRUE)
-
-# check for numeric outliers (not including lat/long)
-outlier_index <- get_outlier(human)
-
-# check ID dups 
-dup_id_index <- get_dups(human, "Q1 ParticipantID")
-
-# for excel output
-human.markup <- bind_rows(
-  na_index, 
-  solo_index,
-  outlier_index,
-  dup_id_index
-)
-
-```
-
 <details>
 <summary>Human Summary</summary>
 ```{r human-unique}
+human <- tables[["human"]]
+
 # unique character values table
 create_unique_table(human,
                     cols_to_ignore = c("Notes", "Comment", "SiteName", "EventName", "ParticipantID"))
 ```
 </details>
 
+
+```{r highlight-data}
+markup <- map(seq_along(tables), function(i){
+  
+  tab <- tables[[i]]
+  tab_name <- names(tables[i])
+  
+  if(is.null(tab)){
+    return(NULL)
+  }
+  
+  # check for empty cells
+  empty_index <- get_empty(tab, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species", "humans only"))
+  
+  # check for solo unique chars (by site name unless Event table)
+  solo_index <- get_solo_char(tab, by_SiteName = tab_name != "event") 
+  
+  # check for numeric outliers (not including lat/long)
+  outlier_index <- get_outlier(tab)
+  
+  # check that EventName matches SiteName and EventDate
+  if(tab_name =="event"){
+    event_index <- get_event_mismatch(tab)
+  }else{ event_index <- NULL }
+  
+  # check that Speciman matches `Animal/Human ID` and SpecimenType and Media
+  if(tab_name =="specimen"){
+    specimen_index <- get_specimen_mismatch(tab)
+  }else{ specimen_index <- NULL }
+  
+  # check ID dups 
+  dup_fields <- c("EventName", "AnimalID", "SpecimenID", "Q1 ParticipantID")
+  dup_id_index <- get_dups(tab, dup_fields[i])
+  
+  bind_rows(empty_index,
+            solo_index, 
+            outlier_index,
+            event_index,
+            specimen_index,
+            dup_id_index)
+})
+
+names(markup) <- tolower(table_names)
+```
+
+
 ```{r style-xlsx-table, include = FALSE}
 
 # Get highlighted workbook object
-markup_list <- list("event" = event.markup, 
-                    "animal" = animal.markup, 
-                    "specimen" = specimen.markup,
-                    "human" = human.markup
+markup_list <- list("event" = markup[["event"]], 
+                    "animal" = markup[["animal"]], 
+                    "specimen" = markup[["specimen"]],
+                    "human" = markup[["human"]]
 )
 
+markup_list <- compact(markup_list) #remove null
+  
 wb <- get_highlighted_wb(
   dfs = sapply(names(markup_list), get),
   tab.names = names(markup_list),
