@@ -293,3 +293,14 @@ human_specs <- cols(
   SpecimensCollected = col_character(),
   Organization = col_character()
 )
+
+humananimalproduction_specs <- c()
+humancropproduction_specs <- c()
+humanextractiveindustry_specs <- c()
+humanhospitalworker_specs  <- c()
+humanhunter_specs <- c()
+humanmarket_specs  <- c()
+humanrestaurant_specs  <- c()
+humansickperson_specs  <- c()
+humantemporarysettlements_specs  <- c()
+humanzoo_specs  <- c()

@@ -37,9 +37,7 @@ identify data that are incorrect or require review. Please be aware data
 must still be checked manually by a person familiar with the data who
 can identify mistakes and make corrections.
 
-Currently, the following tables are summarized: *Event, Animal, and
-Specimen*. Human and module data are to be added. For each of the
-existing tables, you may check your data through two mechanisms: the
+For each table, you may check your data through two mechanisms: the
 summary in the html report and the associated tab in the Excel file.
 
 **Html report:**
@@ -242,23 +240,36 @@ sheets have changes.
 height="3.8in"}  
 
 </details>
-```{r read-data}
-table_names <- c("Event", "Animal", "Specimen", "Human")
 
+```{r read-data}
+
+# all tables
+table_names <- c("Event", "Animal", "Specimen", "Human", "HumanAnimalProduction", "HumanCropProduction", "HumanExtractiveIndustry", "HumanHospitalWorker", "HumanHunter", "HumanMarket", "HumanRestaurant", "HumanSickPerson", "HumanTemporarySettlements", "HumanZoo")
+
+# read in tables
 tables <- map(table_names, function(tab){
+  
+  # try reading in data
   out <- try(read_tsv(h("raw-eidith-data", paste0(tab, "-", country, ".tsv.gz")),  col_types = get(paste(tolower(tab), "specs", sep="_"))), silent=TRUE)
   
+  # if data does not exist, make null object
   if(class(out)[1] == "try-error"){out <- NULL}
   
   return(out)
 })
 
+# give list names
 names(tables) <- tolower(table_names)
+
+# make an object for each table in list
+for(i in seq_along(tables)){
+  assign(names(tables[i]), tables[[i]])
+}
+
 ```
 
 ```{r event-site-map}
 # map site locations 
-event <- tables[["event"]]
 leaflet(data = event) %>%
   addTiles() %>%
   addAwesomeMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, 
@@ -283,47 +294,20 @@ event %>%
 ```
 </details>
 
-<details>
-<summary>Event Summary</summary>
-```{r event-unique}
-create_unique_table(event, cols_to_ignore = c("EventName", "SiteName", "Notes", "Comment"))
-
+```{r summary-tables, results='asis'}
+for (i in seq_along(tables)){
+  
+  tab <- tables[[i]]
+  tab_name <- table_names[i]
+  
+   cat('\n')  
+   cat("<details>") 
+   cat(paste0("<summary>", tab_name,  " Summary</summary>") )
+   create_unique_table(tab, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "Taxa|Class|Order|Family|Genus|Species")) %>% print()
+   cat("</details>")
+   cat('\n') 
+}
 ```
-</details>
-
-<details>
-<summary>Animal Summary</summary>
-```{r animal-unique}
-animal <- tables[["animal"]]
-
-# unique character values table
-create_unique_table(animal,
-                    cols_to_ignore = c("Notes", "Comment", "SiteName", "AnimalID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
-```
-</details>
-
-<details>
-<summary>Specimen Summary</summary>
-```{r specimen-unique}
-specimen <- tables[["specimen"]]
-
-# unique character values table
-create_unique_table(specimen,
-                    cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "Taxa|Class|Order|Family|Genus|Species"))
-```
-</details>
-
-<details>
-<summary>Human Summary</summary>
-```{r human-unique}
-human <- tables[["human"]]
-
-# unique character values table
-create_unique_table(human,
-                    cols_to_ignore = c("Notes", "Comment", "SiteName", "EventName", "ParticipantID"))
-```
-</details>
-
 
 ```{r highlight-data}
 markup <- map(seq_along(tables), function(i){
@@ -355,7 +339,7 @@ markup <- map(seq_along(tables), function(i){
   }else{ specimen_index <- NULL }
   
   # check ID dups 
-  dup_fields <- c("EventName", "AnimalID", "SpecimenID", "Q1 ParticipantID")
+  dup_fields <- c("EventName", "AnimalID", "SpecimenID", "Q1 ParticipantID", rep("ParticipantID", 10))
   dup_id_index <- get_dups(tab, dup_fields[i])
   
   bind_rows(empty_index,
@@ -373,14 +357,9 @@ names(markup) <- tolower(table_names)
 ```{r style-xlsx-table, include = FALSE}
 
 # Get highlighted workbook object
-markup_list <- list("event" = markup[["event"]], 
-                    "animal" = markup[["animal"]], 
-                    "specimen" = markup[["specimen"]],
-                    "human" = markup[["human"]]
-)
 
-markup_list <- compact(markup_list) #remove null
-  
+markup_list <- compact(markup) #remove null
+
 wb <- get_highlighted_wb(
   dfs = sapply(names(markup_list), get),
   tab.names = names(markup_list),
