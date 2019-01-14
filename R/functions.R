@@ -14,7 +14,7 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
         readr::write_tsv(z, file_out)
       })
     } else {
-      file_out <- file.path(output_dir, stri_join(x, ".tsv.gz"))
+      file_out <- file.path(output_dir, stringi::stri_join(x, ".tsv.gz"))
       readr::write_tsv(dat, file_out)
     }
   })
