@@ -10,7 +10,7 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
     if (!is.null(dat$Country)) {
       datlist <- split(dat, dat$Country)
       purrr::walk(datlist, function(z) {
-        file_out <- file.path(output_dir, stri_join(x, "-", z$Country[1], ".tsv.gz"))
+        file_out <- file.path(output_dir, stringi::stri_join(x, "-", z$Country[1], ".tsv.gz"))
         readr::write_tsv(z, file_out)
       })
     } else {
