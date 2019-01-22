@@ -22,10 +22,12 @@ h <- here::here
 walk(list.files(h("R/"), full.names = TRUE),
      source, echo = FALSE, verbose = FALSE)
 country <- params$country
+metadata <- eidith::ed2_metadata() %>% 
+  filter(replacement_name!="DROP"| is.na(replacement_name)) 
 
 ```
 
-<small>_Click on the_ ▶ _︎arrows to expand sections._</small>
+#### _Click on the_ ▶ _︎arrows to expand sections._
 
 <details>
 <summary>Instructions - Read first!</summary>
@@ -252,6 +254,12 @@ tables <- map(table_names, function(tab){
   # try reading in data
   out <- try(read_tsv(h("raw-eidith-data", paste0(tab, "-", country, ".tsv.gz")),  col_types = get(paste(tolower(tab), "specs", sep="_"))), silent=TRUE)
   
+    # select column names from metadata
+  cnames <- metadata %>% 
+    filter(endpoint2 == tab, original_name %in% names(out)) %>%
+    pull(original_name)
+  out <- try(select(out, SiteName, !!cnames), silent = TRUE)
+
   # if data does not exist, make null object
   if(class(out)[1] == "try-error"){out <- NULL}
   

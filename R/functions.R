@@ -47,35 +47,43 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
       stri_join(., collapse = "; ")
   }
 
+  coltypes <- map(dat, class) %>% unlist()
+
   # character data
-  dat_char <- dat %>%
-    select_if(is.character) %>%
-    gather() %>%
-    na.omit() %>%
-    group_by(key) %>%
-    summarize(values = collapse_mult(value),
-              count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
+  if("character" %in% coltypes){
+    dat_char <- dat %>%
+      select_if(is.character) %>%
+      gather() %>%
+      na.omit() %>%
+      group_by(key) %>%
+      summarize(values = collapse_mult(value),
+                count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
+  }else{dat_char <- tibble()}
 
   # numeric data
-  dat_num <- dat %>%
-    select_if(is.numeric) %>%
-    gather() %>%
-    na.omit() %>%
-    group_by(key) %>%
-    summarize(values = stri_join(min(value), max(value), sep = "-"), count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
+  if("numeric" %in% coltypes){
+    dat_num <- dat %>%
+      select_if(is.numeric) %>%
+      gather() %>%
+      na.omit() %>%
+      group_by(key) %>%
+      summarize(values = stri_join(min(value), max(value), sep = "-"), count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
+  }else{dat_num <- tibble()}
 
   # date data
   dat_date <- dat %>%
     select_if(function(col) is.Date(col) | is.difftime(col))
 
-  dat_date <- map_df(seq_along(dat_date), function(i){
-    test <- dat_date %>%
-      select(i) %>%
-      gather() %>%
-      na.omit() %>%
-      group_by(key) %>%
-      summarize(values = stri_join(min(value), max(value), sep = " to "), count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
-  })
+  if(nrow(dat_date) > 0){
+    dat_date <- map_df(seq_along(dat_date), function(i){
+      dat_date %>%
+        select(i) %>%
+        gather() %>%
+        na.omit() %>%
+        group_by(key) %>%
+        summarize(values = stri_join(min(value), max(value), sep = " to "), count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
+    })
+  }
 
   # all na
   dat_na_names <- dat %>%
