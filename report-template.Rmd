@@ -283,7 +283,10 @@ leaflet(data = event) %>%
   addAwesomeMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, 
                     label = get_event_labels(),
                     icon = get_event_icons()
-  )
+  ) %>%
+  addLegend(labels = get_event_legend()$label,
+            colors = get_event_legend()$hex_color,
+            opacity = 1)
 
 ```
 

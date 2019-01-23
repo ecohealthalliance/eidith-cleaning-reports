@@ -384,20 +384,55 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
   return(wb)
 }
 
+# Colors allowed by awesomeIcons()
+
+possible.aI.colors <- c("lightgray", "green", "red", "blue",
+                        "orange", "beige", "purple", "pink",
+                        "white", "gray", "darkpurple", "cadetblue",
+                        "darkgreen", "darkred", "darkblue",
+                        "lightgreen", "lightred", "lightblue"
+)
+
+# Scratch code to look at all awesomeIcons() marker colors
+# RGB values can be extracted from screen with Digital Color Meter in Mac
+
+# dat <- data.frame(
+#   lat = seq(length.out = 18, from = 0, to = 80),
+#   lng = seq(length.out = 18, from = 100, to = 300)
+# )
+#
+# leaflet(data = dat) %>%
+#   addTiles() %>%
+#   addAwesomeMarkers(lng = ~lng, lat = ~lat,
+#                     icon = awesomeIcons(markerColor = possible.aI.colors)
+#   )
+
+# Generate an awesomeIcons() to hex color lookup table
+
+color.lookup.table <- data.frame(
+  aI_color = possible.aI.colors,
+  hex_color = c(
+    "#A3A3A3", "#6FAB25", "#D03C29", "#37A8DA",
+    "#F3952F", "#FFC98F", "#CD50B5", "#FF8BE8",
+    "#FBFBFB", "#565656", "#593869", "#416574",
+    "#72822E", "#9E3235", "#00669F",
+    "#BBF770", "#FF8A7C", "#88DAFF"
+  ),
+  stringsAsFactors = FALSE
+)
+
 # Get leaflet labels for events
 
 get_event_labels <- function() {
 
   # Generate text labels
 
-  labs <- lapply(seq(nrow(event)), function(x) {
-
+  labs <-
     stri_join("Site Name: ",
-              pull(event[x, "SiteName"]),
+              event$SiteName,
               "<br>Concurrent Sampling Site: ",
-              pull(event[x, "ConcurrentSamplingSite"])
+              event$ConcurrentSamplingSite
     )
-  })
 
   # Convert to html for display by leaflet
 
@@ -434,18 +469,9 @@ get_event_icons <- function() {
 
   event_mod <- left_join(event, level.table, by = c("ConcurrentSamplingSite"))
 
-  # Colors allowed by awesomeIcons()
-
-  possible.colors <- c("lightgray", "green", "red", "blue",
-                       "orange", "beige", "purple", "pink",
-                       "white", "gray", "darkpurple", "cadetblue",
-                       "darkgreen", "darkred", "darkblue",
-                       "lightgreen", "lightred", "lightblue"
-  )
-
   # Generate a vector of colors based on the site factor level
 
-  colors <- possible.colors[event_mod$site_factor_level]
+  colors <- possible.aI.colors[event_mod$site_factor_level]
 
   # Generate icons for plotting with leaflet
 
@@ -459,6 +485,30 @@ get_event_icons <- function() {
   )
 }
 
-# Create a lookup table for Excel column lettering scheme
+# Get leaflet legend data for events
+
+get_event_legend <- function() {
+
+  # Generate legend labels
+
+  label <- event$ConcurrentSamplingSite
+
+  # Generate corresponding awesomeIcons() colors
+
+  aI_color <- get_event_icons()$markerColor
+
+  # These should be the same length
+
+  assertthat::assert_that(length(label) == length(aI_color))
+
+  legend_data <- data.frame(label, aI_color, stringsAsFactors = FALSE) %>%
+    distinct() %>%
+    left_join(., color.lookup.table, by = c("aI_color")) %>%
+    arrange(label)
+
+  return(legend_data)
+}
+
+ # Create a lookup table for Excel column lettering scheme
 
 cellcol_lookup <- cellranger::num_to_letter(1:2000)
