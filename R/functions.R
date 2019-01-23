@@ -105,16 +105,28 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
   bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
     arrange(factor(key, levels = colnames(dat))) %>%
     rename(field = key) %>%
-    mutate(count_empty =
-             cell_spec(count_empty, format = "html",
-                       background = ifelse(grepl("^0/", count_empty), "#FFFFFF", "#EA8E9A")
-             ),
-           field = case_when(
-             field %in% mm.measures ~ stri_join(field, " (mm)"),
-             field %in% g.measures ~ stri_join(field, " (g)"),
-             TRUE ~ field
-           )
+    mutate(values = stri_split(values, fixed = "; ")) %>%
+    unnest() %>%
+    mutate(
+      values = ifelse(
+        str_detect(values, fixed("(1)")),
+        paste0("<span style=\"border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #CEFCC7;\">", values, "</span>"),
+        values
+      ),
+      count_empty =
+        cell_spec(count_empty, format = "html",
+                  background = ifelse(grepl("^0/", count_empty), "#FFFFFF", "#EA8E9A")
+        ),
+      field = case_when(
+        field %in% mm.measures ~ stri_join(field, " (mm)"),
+        field %in% g.measures ~ stri_join(field, " (g)"),
+        TRUE ~ field
+      )
     ) %>%
+    group_by(field, count_empty) %>%
+    mutate(values = paste0(values, collapse = "<br>")) %>%
+    distinct() %>%
+    select(field, values, count_empty) %>%
     kable(format = "html", escape = FALSE) %>%
     kable_styling()
 }
