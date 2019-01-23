@@ -120,28 +120,21 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
 }
 
 # identify empty cells
-get_empty <- function(dat, cols_to_ignore = c()){
+get_empty <- function(dat, metanames, cols_to_ignore = c()){
 
   cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
 
   # special rules
   ## check for NA in col_na only if col_condition meets condition
-  condition_check <- tribble(
-    ~col_na,                   ~col_condition ,                 ~condition,
-    ### Add VeterinarianCare, all measurements, human only
-    "NbrBeds",                 "DiseaseTransmissionInterfaces", "human hospital",
-    "CommunityEngagementDate", "CommunityEngagement",           "yes",
-    "NecropsyExamResult",      "NecropsyExam",                  "yes",
-    "PreservationMethodIfDead","NecropsyExam",                  "yes",
-    "ClinicalSignsIfSick",     "HealthStatus",                   c("injured", "sick"),
-    "ClinicalSignsOther",      "ClinicalSignsIfSick",           "other"
-  )
+  condition_check <- read_csv(h("condition_check.csv")) %>%
+    mutate(condition = stri_split_regex(condition, ", "))
 
   which_na <- map_df(seq_along(dat), function(i){
-    # ignore columns that are 100% NA
-    #if(i %in% which(apply(dat, 2, function(x){all(is.na(x))}))){return()}
 
-    # ignore specified columns
+    # only include names selected from metadata
+    if(!i %in% which(names(dat) %in% metanames)){return()}
+
+    # ignore other specified columns
     if(i %in% which(str_detect(names(dat), cols_to_ignore_regex))){return()}
 
     # get NAs
@@ -151,9 +144,12 @@ get_empty <- function(dat, cols_to_ignore = c()){
 
     # apply special rules
     if(col_name %in% condition_check$col_na){
-      which_condition <- which(condition_check$col_na == col_name) # get index of condition
+      which_condition <- which(col_name == condition_check$col_na) # get index of condition
       col_condition <- dat %>% pull(condition_check$col_condition[which_condition]) # get data from condition column
       condition <- col_condition %in% unlist(condition_check$condition[which_condition]) # determine where condition column meets condition
+      if(condition_check$inverse[which_condition]){
+        condition <- !condition
+      }
       row_id <- which(is.na(col_dat) & condition)
     }
 
