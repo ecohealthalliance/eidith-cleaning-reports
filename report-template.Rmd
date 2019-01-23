@@ -327,11 +327,11 @@ markup <- map(seq_along(tables), function(i){
   tab_name <- names(tables[i])
   
   if(is.null(tab)){
-    return(NULL)
+    return()
   }
   
   # check for empty cells
-  empty_index <- get_empty(tab, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species", "humans only"))
+  empty_index <- get_empty(tab, cols_to_ignore = c("Notes", "Comment", "Taxa|Class|Order|Family|Genus|Species", "OutbreakName"))
   
   # check for solo unique chars (by site name unless Event table)
   solo_index <- get_solo_char(tab, by_SiteName = tab_name != "event") 

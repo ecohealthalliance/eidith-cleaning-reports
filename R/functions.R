@@ -122,25 +122,48 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
 # identify empty cells
 get_empty <- function(dat, cols_to_ignore = c()){
 
-  # ID all NAs
-  which_na = which(is.na(dat), arr.ind=TRUE) %>%
-    as_tibble() %>%
-    mutate(flag = "empty value",
-           fill = "gray")
-
-  # ignore columns that are 100% NA
-  all_na <- which(apply(dat, 2, function(x){all(is.na(x))}))
-  which_na <- which_na %>% filter(!col %in% all_na)
-
-  # ignore other specified columns (regex matching)
   cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
 
-  if(!is.null(cols_to_ignore)){
-    col_names <- names(dat)[unique(which_na$col)]
-    ignore_names <- col_names[grepl(cols_to_ignore_regex, col_names, ignore.case = TRUE)]
-    which_na <- which_na %>% filter(!col %in% which(names(dat) %in% ignore_names))
-  }
+  # special rules
+  ## check for NA in col_na only if col_condition meets condition
+  condition_check <- tribble(
+    ~col_na,                   ~col_condition ,                 ~condition,
+    ### Add VeterinarianCare, all measurements, human only
+    "NbrBeds",                 "DiseaseTransmissionInterfaces", "human hospital",
+    "CommunityEngagementDate", "CommunityEngagement",           "yes",
+    "NecropsyExamResult",      "NecropsyExam",                  "yes",
+    "PreservationMethodIfDead","NecropsyExam",                  "yes",
+    "ClinicalSignsIfSick",     "HealthStatus",                   c("injured", "sick"),
+    "ClinicalSignsOther",      "ClinicalSignsIfSick",           "other"
+  )
 
+  which_na <- map_df(seq_along(dat), function(i){
+    # ignore columns that are 100% NA
+    #if(i %in% which(apply(dat, 2, function(x){all(is.na(x))}))){return()}
+
+    # ignore specified columns
+    if(i %in% which(str_detect(names(dat), cols_to_ignore_regex))){return()}
+
+    # get NAs
+    col_dat <- dat %>% pull(i)
+    col_name <- names(dat)[i]
+    row_id <-  which(is.na(col_dat))
+
+    # apply special rules
+    if(col_name %in% condition_check$col_na){
+      which_condition <- which(condition_check$col_na == col_name) # get index of condition
+      col_condition <- dat %>% pull(condition_check$col_condition[which_condition]) # get data from condition column
+      condition <- col_condition %in% unlist(condition_check$condition[which_condition]) # determine where condition column meets condition
+      row_id <- which(is.na(col_dat) & condition)
+    }
+
+    # get the ids
+    tibble(row = row_id,
+           col = i,
+           flag = "empty value",
+           fill = "gray")
+
+  })
   return(which_na)
 }
 
