@@ -305,18 +305,18 @@ for (i in seq_along(tables)){
   tab <- tables[[i]]
   tab_name <- table_names[i]
   
-  if(!is.null(tab)){
-    metanames <- metadata %>% 
-      filter(endpoint2 == tab_name, original_name %in% names(tab)) %>%
-      pull(original_name)
-  tab <- select(tab, SiteName, one_of("TaxaGroup"), !!metanames)# include taxa group if exists because needed in specimen table for human samples but marked as DROP
-}
-   cat('\n')  
-   cat("<details>") 
-   cat(paste0("<summary>", tab_name,  " Summary</summary>") )
-   create_unique_table(tab, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species")) %>% print()
-   cat("</details>")
-   cat('\n') 
+  # check for empty cells
+  metanames <- metadata %>% 
+    filter(endpoint2 == tab_name, original_name %in% names(tab)) %>%
+    pull(original_name)
+  if(tab_name == "Specimen"){metanames <- c(metanames, "TaxaGroup")} # include taxa group in specimen table for human samples despite being marked as DROP
+  
+  cat('\n')  
+  cat("<details>") 
+  cat(paste0("<summary>", tab_name,  " Summary</summary>") )
+  create_unique_table(tab, metanames, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "Latitude", "Longitude")) %>% print()
+  cat("</details>")
+  cat('\n') 
 }
 ```
 
@@ -331,11 +331,11 @@ markup <- map(seq_along(tables), function(i){
   }
   
   # check for empty cells
-     metanames <- metadata %>% 
-      filter(endpoint2 == tab_name, original_name %in% names(tab)) %>%
-      pull(original_name)
-     if(tab_name == "Specimen"){metanames <- c(metanames, "TaxaGroup")} # include taxa group in specimen table for human samples despite being marked as DROP
-
+  metanames <- metadata %>% 
+    filter(endpoint2 == tab_name, original_name %in% names(tab)) %>%
+    pull(original_name)
+  if(tab_name == "Specimen"){metanames <- c(metanames, "TaxaGroup")} # include taxa group in specimen table for human samples despite being marked as DROP
+  
   empty_index <- get_empty(tab, metanames, cols_to_ignore = c("Notes", "Comment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName"))
   
   # check for solo unique chars (by site name unless Event table)

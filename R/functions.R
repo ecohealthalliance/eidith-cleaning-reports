@@ -21,20 +21,12 @@ download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
   return(TRUE)
 }
 
-# create unique values table
-create_unique_table <- function(dat, cols_to_ignore = c()){
+# support function for summarizing values in create_unique_table
+collapse_mult <- function(x){
 
-  # check if null
-  if(is.null(dat)){
-    return(kable("No data in EIDITH", col.names = ""))
-  }
-  # ignore specified columns (regex matching)
-  cols_to_ignore_regex <- stri_join(c(cols_to_ignore, "Latitude", "Longitude"), collapse = "|")
+  if(all(is.na(x))){return("all empty")}
 
-  dat <- dat %>% select(-matches(!!cols_to_ignore_regex))
-
-  collapse_mult <- function(x){
-
+  if(is.character(x)){
     clean_x <- str_split(x, pattern = ";") %>%
       unlist() %>%
       str_trim()
@@ -43,55 +35,64 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
 
     sum_tbl <- table(clean_x)
 
-    stri_join(unique_values, " (", sum_tbl, ")" ) %>%
-      stri_join(., collapse = "; ")
+    return(stri_join(unique_values, " (", sum_tbl, ")" ) %>%
+             stri_join(., collapse = "; "))
   }
 
-  coltypes <- map(dat, class) %>% unlist()
-
-  # character data
-  if("character" %in% coltypes){
-    dat_char <- dat %>%
-      select_if(is.character) %>%
-      gather() %>%
-      na.omit() %>%
-      group_by(key) %>%
-      summarize(values = collapse_mult(value),
-                count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
-  }else{dat_char <- tibble()}
-
-  # numeric data
-  if("numeric" %in% coltypes){
-    dat_num <- dat %>%
-      select_if(is.numeric) %>%
-      gather() %>%
-      na.omit() %>%
-      group_by(key) %>%
-      summarize(values = stri_join(min(value), max(value), sep = "-"), count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
-  }else{dat_num <- tibble()}
-
-  # date data
-  dat_date <- dat %>%
-    select_if(function(col) is.Date(col) | is.difftime(col))
-
-  if(nrow(dat_date) > 0){
-    dat_date <- map_df(seq_along(dat_date), function(i){
-      dat_date %>%
-        select(i) %>%
-        gather() %>%
-        na.omit() %>%
-        group_by(key) %>%
-        summarize(values = stri_join(min(value), max(value), sep = " to "), count_empty = stri_join(nrow(dat) - n(), nrow(dat), sep = "/"))
-    })
+  if(is.numeric(x)){
+    return(stri_join(min(x, na.rm = TRUE), max(x, na.rm = TRUE), sep = "-"))
   }
 
-  # all na
-  dat_na_names <- dat %>%
-    select_if(function(x) all(is.na(x))) %>%
-    colnames()
-  dat_na <- tibble(key = dat_na_names, values = "all empty", count_empty = stri_join(nrow(dat), nrow(dat), sep = "/"))
+  if(is.Date(x) | is.difftime(x)){
+    return(stri_join(min(x, na.rm = TRUE), max(x, na.rm = TRUE), sep = " to "))
+  }
+}
 
-  # together
+
+# create unique values table
+create_unique_table <- function(dat, metanames, cols_to_ignore = c()){
+
+  # check if null
+  if(is.null(dat)){
+    return(kable("No data in EIDITH", col.names = ""))
+  }
+
+  # ignore specified columns (regex matching)
+  cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
+
+  # special rules
+  ## count empty in col_na only if col_condition meets condition
+  condition_check <- read_csv(h("condition_check.csv")) %>%
+    mutate(condition = stri_split_regex(condition, ", "))
+
+  out <-map_df(seq_along(dat), function(i){
+
+    # only include names selected from metadata
+    if(!i %in% which(names(dat) %in% metanames)){return()}
+
+    # ignore other specified columns
+    if(i %in% which(str_detect(names(dat), cols_to_ignore_regex))){return()}
+
+    col_dat <- dat %>% pull(i)
+    col_name <- names(dat)[i]
+
+    if(col_name %in% condition_check$col_na){
+      which_condition <- which(col_name == condition_check$col_na) # get index of condition
+      col_condition <- dat %>% pull(condition_check$col_condition[which_condition]) # get data from condition column
+      condition <- col_condition %in% unlist(condition_check$condition[which_condition]) # determine where condition column meets condition
+      if(condition_check$inverse[which_condition]){
+        condition <- !condition
+      }
+      col_dat <- col_dat[condition]
+    }
+
+    missing_numerator <- sum(is.na(col_dat))
+    missing_denomenator <- length(col_dat)
+
+    tibble(field = col_name,
+           values = collapse_mult(col_dat),
+           count_empty = stri_join(missing_numerator, missing_denomenator, sep = "/"))
+  })
 
   mm.measures <- c("BatEarHeight", "BatTailLength", "BatHindFoodLength",
                    "BatForearmLength", "BatHeadBodyLength", "NHPBodyLength",
@@ -102,9 +103,7 @@ create_unique_table <- function(dat, cols_to_ignore = c()){
 
   g.measures <- c("BatWeight", "NHPWeight", "RodentOtherWeight")
 
-  bind_rows(dat_char, dat_num, dat_date, dat_na) %>%
-    arrange(factor(key, levels = colnames(dat))) %>%
-    rename(field = key) %>%
+  out %>%
     mutate(values = stri_split(values, fixed = "; ")) %>%
     unnest() %>%
     mutate(
@@ -186,7 +185,7 @@ get_solo_char <- function(dat, by_SiteName = TRUE) {
     # if these criteria are met...
     if(class(col_dat)[1] == "character" &
        !all(is.na(col_dat)) &
-       !grepl("Notes|Comment|EventName|SiteName|ID|Taxa|Class|Order|Family|Genus|Species", col_name, ignore.case = FALSE)) {
+       !grepl("Notes|Comment|SiteName|ID|EventName|^Class$|^Order$|^Family$|^Genus$|Species", col_name, ignore.case = FALSE)) {
 
       # summarize count by unique character string
       cols <- c("SiteName", col_name)
@@ -540,6 +539,6 @@ get_event_legend <- function() {
   return(legend_data)
 }
 
- # Create a lookup table for Excel column lettering scheme
+# Create a lookup table for Excel column lettering scheme
 
 cellcol_lookup <- cellranger::num_to_letter(1:2000)

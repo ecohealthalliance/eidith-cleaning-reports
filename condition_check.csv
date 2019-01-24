@@ -28,3 +28,4 @@ RodentOtherTailLength,TaxaGroup,rodents/shrews,FALSE
 RodentOtherRHindFoot,TaxaGroup,rodents/shrews,FALSE
 RodentOtherBodyLength,TaxaGroup,rodents/shrews,FALSE
 RodentOtherWeight,TaxaGroup,rodents/shrews,FALSE
+Q7 WhoPaysGrowCrops,Q6 OnSiteFoodProduction,yes,FALSE
