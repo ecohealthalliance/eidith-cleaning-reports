@@ -6,4 +6,6 @@
 *.DS_Store
 outputs
 to_deploy
+notes
 *.rds
+report-template.html
