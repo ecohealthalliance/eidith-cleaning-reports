@@ -63,65 +63,35 @@ notes/comments, event name, and ID fields.
 
 -   *Values*: a summary of values that were entered into EIDITH
 
--   **Character fields** (e.g. Season) contain the unique text along
-with the number of times each value was given.
+    -   **Character fields** (e.g. Season) contain the unique text along with the number of times each value was given. Responses that occur only once are highlighted green. 
 
--   Please confirm the **spelling** is correct and check
-**whether any fields should be combined**. For example. if
-you have the following interfaces: in house (1); IN HUMAN
-DWELLING (43); in human dwelling (108), you know that the
-correct interface is: “in human dwelling” (you can confirm
-that on the EIDITH data entry app), so the other interfaces
-need to be corrected. Note, if you collected data during
-Year 1 or before the app was fully developed, you will have
-more corrections to make.
+        -   Please confirm the **spelling** is correct and check **whether any fields should be combined**. For example. if you have the following interfaces: in house (1); IN HUMAN DWELLING (43); in human dwelling (108), you know that the correct interface is: “in human dwelling” (you can confirm that on the EIDITH data entry app), so the other interfaces need to be corrected. 
+        
+        -   Note, if you collected data during Year 1 or before the app was fully developed, you will have more corrections to make.  For example, empty values in the CommunityEngagement field of the Event table will need to be filled in.
 
--   Keep an eye out for **values that were only entered a few
-times**. For example, if you have the following for
-drinkingWaterShared: no (154); unknown (8); yes (2), you may
-want to confirm that there were two events/sites that truly
-have shared drinking water, or whether that was a mistake
-and all of them should be no/unknown.
+        -   Keep an eye out for **values that were only entered a few times**. For example, if you have the following for drinkingWaterShared: no (154); unknown (8); yes (2), you may want to confirm that there were two events/sites that truly have shared drinking water, or whether that was a mistake and all of them should be no/unknown.
 
--   **Numeric and Date fields** (e.g. DurationDays) contain the
-entire range for all values in that column (e.g. 2-27).
+    -   **Numeric and Date fields** (e.g. DurationDays) contain the entire range for all values in that column (e.g. 2-27).
 
--   You are the best person to judge if that **range is
-reasonable** for your sites/animals. For example, if in your
-country/at your sites the only bats in the area are from two
-species of large fruit bats (say the typical arm length for
-both species is 140-160mm), and the range of the arm length
-on the html table is 21-160mm, then you should compare the
-EIDITH value of 21mm with your field data sheet to confirm
-the correct length that was measured.   
-
--   **“All empty”** is written if a column has no values entered.
-Please **confirm that it makes sense that you didn’t enter data
-for that column**. For example, if you never had a sick animal
-that you sampled, then it might make sense that the column for
-“ClinicalSignsOther” is all empty. Whereas a column like
-Country should never be all empty.
-
+        -   You are the best person to judge if that **range is reasonable** for your sites/animals. For example, if in your country/at your sites the only bats in the area are from two species of large fruit bats (say the typical arm length for both species is 140-160mm), and the range of the arm length on the html table is 21-160mm, then you should compare the EIDITH value of 21mm with your field data sheet to confirm the correct length that was measured.
+        
+    -    **“All empty”** is written if a column has no values entered.
+    
+            -   Please **confirm that it makes sense that you didn’t enter data for that column**. For example, if you never had a sick animal that you sampled, then it might make sense that the column for “ClinicalSignsOther” is all empty. Whereas a column like Country should never be all empty. 
+            
 -   *Count\_empty:* this is the number of rows that do not have a
 value for that column. In general, you will want to double check the
 columns that have empty values to confirm whether you need to make
 corrections. Counts with zeros in the numerator indicate no empty
-values.
+values.             
 
--   Sometimes it makes sense that you have mostly empty data. For
-example:
+    -   For the majority of fields, the numerator is the total number of empty values for the given field and the denominator is the total number of rows in the table.  However, for certain fields, count_empty is adjusted to reflect the condition for which the field is relevant.  For example, CommunityEngagementDate is only required when CommunityEngagement = "yes".  Therefore, the numerator is the number of times CommunityEngagementDate is empty when CommunityEngagement = "yes", and the denominator is the number of times CommunityEngagement = "yes".
 
--   If it says 165/165, then the values column will corroborate
-that and say “all empty”.
+    -   Sometimes it makes sense that you have mostly empty data. For example:
 
--   If you only responded to one outbreak, count\_empty might
-be 160/165, which means that only 5 outbreak events were
-noted, which probably makes sense.
-
--   In other cases, empty values point to an error. For example,
-if you have 2/165 empty from the Season column, you will need
-to make corrections for those 2 rows that are empty their
-Season.
+        -   If it says 165/165, then the values column will corroborate that and say “all empty”.  If you only responded to one outbreak, count\_empty might be 160/165, which means that only 5 outbreak events were noted, which probably makes sense.
+        
+        -   In other cases, empty values point to an error. For example, if you have 2/165 empty from the Season column, you will need to make corrections for those 2 rows that are empty their Season.
 
 **Excel file report:**
 
@@ -149,34 +119,21 @@ with values that need to be checked are colored:
 
 -   Bright green means it is a unique value.
 
--   On the event table, values are highlighted if they are unique
-within the *entire* table. On all other tables, values are
-highlighted if they are unique for the given *site name. *
+    -   On the event table, values are highlighted if they are unique within the *entire* table. On all other tables, values are highlighted if they are unique for the given *site name. *
 
--   A unique value may be fine (e.g., an independent site that was
-only visited one time at the start of PREDICT 2), or it could
-indicate a mistake (e.g. in Season if it is spelled “Dri”
-instead of “Dry”).
+    -   A unique value may be fine (e.g., an independent site that was only visited one time at the start of PREDICT 2), or it could indicate a mistake (e.g. in Season if it is spelled “Dri” instead of “Dry”).
 
--   While the system will pick up these misspellings, if you
-spell it wrong multiple times it won’t show up as an issue
-in the Excel file – though you should see it in the list of
-unique values on the html file.
+    -   While the system will pick up these misspellings, if you spell it wrong multiple times it won’t show up as an issue in the Excel file – though you should see it in the list of unique values on the html file.
 
--   Gray means no value was entered in that row (it is empty):
+-   Gray means no value was entered in that row (it is empty). 
 
--   Please check to confirm whether you have data for that row to
-update EIDITH.
-
--   Note, that if all of the cells are empty data, it is not
-highlighted here, but you can see that on the html sheet (where
-it will say all empty).
+    -  Please check to confirm whether you have data for that row to update EIDITH.  Note, for certain fields, the highlighting is applied only in cases where the field is relevant.  For example, empty values in CommunityEngagementDate are highlighted gray only when CommunityEngagement = "yes".
 
 -   The whole row is light green:
 
--   This means that there were notes given for this entry. **Always
-check all notes**, in case you noted that something was recorded
-incorrectly and needs to be changed.
+    -   This means that there were notes given for this entry. **Always
+    check all notes**, in case you noted that something was recorded
+    incorrectly and needs to be changed.
 
 -   Purple means there is a duplicate value for something that should be
 unique (i.e., EventName, Animal\_ID, Specimen\_ID, ParticipantID)
@@ -187,27 +144,21 @@ type or medium (based on the original definitions at the launch of
 the EIDITH App). If you were collecting samples before the naming
 became standardized, you will notice many issues.
 
--   Please confirm with the field data that the specimen type and
-medium are correct in EIDITH.
+    -   Please confirm with the field data that the specimen type and
+    medium are correct in EIDITH.
 
--   **DO NOT change specimen IDs to match the EIDITH format IF THE
-TUBE STILL HAS THE ORIGINAL ID!** In this case, we will leave
-the ID as it was given originally in order to be able to match
-the samples with the metadata. If you note that the ID entered
-into EIDITH is actually incorrect from what is written on the
-tube in your freezers, then you can change it.
+    -   **DO NOT change specimen IDs to match the EIDITH format IF THE
+    TUBE STILL HAS THE ORIGINAL ID!** In this case, we will leave
+    the ID as it was given originally in order to be able to match
+    the samples with the metadata. If you note that the ID entered
+    into EIDITH is actually incorrect from what is written on the
+    tube in your freezers, then you can change it.
 
 -   Yellow means that the value is a numeric outlier, defined as greater
 than the 75th percentile + 2.5 \* inter-quartile range (IQR) or less
 than the 25th percentile - 2.5 \* IQR.
 
--   To facilitate the cleaning please make use of the filter buttons
-
--   You can filter the cleaning\_flag column to remove the blanks
-and see all of the rows with values that need to be checked
-
--   You can also filter each of the columns by color, so if you just
-want to see the unique values, you can filter by bright green
+To facilitate the cleaning please make use of the filter buttons.  You can filter the cleaning\_flag column to remove the blanks and see all of the rows with values that need to be checked.  You can also filter each of the columns by color, so if you just want to see the unique values, you can filter by bright green
 
 **Making and submitting corrections:**
 
@@ -250,13 +201,13 @@ table_names <- c("Event", "Animal", "Specimen", "Human", "HumanAnimalProduction"
 
 # read in tables
 tables <- map(table_names, function(x){
-  
+
   # try reading in data
   out <- try(read_tsv(h("raw-eidith-data", paste0(x, "-", country, ".tsv.gz")),  col_types = get(paste(tolower(x), "specs", sep="_"))), silent=TRUE)
-  
+
   # if data does not exist, make null object
   if(class(out)[1] == "try-error"){out <- NULL}
-  
+
   return(out)
 })
 
@@ -271,10 +222,10 @@ for(i in seq_along(tables)){
 ```
 
 ```{r event-site-map}
-# map site locations 
+# map site locations
 leaflet(data = event) %>%
   addTiles() %>%
-  addAwesomeMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude, 
+  addAwesomeMarkers(lng = ~SiteLongitude, lat = ~SiteLatitude,
                     label = get_event_labels(),
                     icon = get_event_icons()
   ) %>%
@@ -287,7 +238,7 @@ leaflet(data = event) %>%
 <details>
 <summary>Site Names</summary>
 ```{r site-names}
-event %>% 
+event %>%
   group_by(SiteName) %>%
   count() %>%
   ungroup() %>%
@@ -301,65 +252,65 @@ event %>%
 
 ```{r summary-tables, results='asis'}
 for (i in seq_along(tables)){
-  
+
   tab <- tables[[i]]
   tab_name <- table_names[i]
-  
+
   # check for empty cells
-  metanames <- metadata %>% 
+  metanames <- metadata %>%
     filter(endpoint2 == tab_name, original_name %in% names(tab)) %>%
     pull(original_name)
   if(tab_name == "Specimen"){metanames <- c(metanames, "TaxaGroup")} # include taxa group in specimen table for human samples despite being marked as DROP
-  
-  cat('\n')  
-  cat("<details>") 
+
+  cat('\n')
+  cat("<details>")
   cat(paste0("<summary>", tab_name,  " Summary</summary>") )
   create_unique_table(tab, metanames, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "Latitude", "Longitude")) %>% print()
   cat("</details>")
-  cat('\n') 
+  cat('\n')
 }
 ```
 
 ```{r highlight-data}
 markup <- map(seq_along(tables), function(i){
-  
+
   tab <- tables[[i]]
   tab_name <- table_names[i]
-  
+
   if(is.null(tab)){
     return()
   }
-  
+
   # check for empty cells
-  metanames <- metadata %>% 
+  metanames <- metadata %>%
     filter(endpoint2 == tab_name, original_name %in% names(tab)) %>%
     pull(original_name)
   if(tab_name == "Specimen"){metanames <- c(metanames, "TaxaGroup")} # include taxa group in specimen table for human samples despite being marked as DROP
-  
+
   empty_index <- get_empty(tab, metanames, cols_to_ignore = c("Notes", "Comment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName"))
-  
+
   # check for solo unique chars (by site name unless Event table)
-  solo_index <- get_solo_char(tab, by_SiteName = tab_name != "Event") 
-  
+  solo_index <- get_solo_char(tab, by_SiteName = tab_name != "Event")
+
   # check for numeric outliers (not including lat/long)
   outlier_index <- get_outlier(tab)
-  
+
   # check that EventName matches SiteName and EventDate
   if(tab_name =="Event"){
     event_index <- get_event_mismatch(tab)
   }else{ event_index <- NULL }
-  
+
   # check that Speciman matches `Animal/Human ID` and SpecimenType and Media
   if(tab_name =="Specimen"){
     specimen_index <- get_specimen_mismatch(tab)
   }else{ specimen_index <- NULL }
-  
-  # check ID dups 
+
+  # check ID dups
   dup_fields <- c("EventName", "AnimalID", "SpecimenID", "Q1 ParticipantID", rep("ParticipantID", 10))
   dup_id_index <- get_dups(tab, dup_fields[i])
-  
+
   bind_rows(empty_index,
-            solo_index, 
+            solo_index,
             outlier_index,
             event_index,
             specimen_index,
