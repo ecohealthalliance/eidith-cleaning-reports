@@ -191,7 +191,12 @@ get_solo_char <- function(dat, by_SiteName = TRUE) {
       cols <- c("SiteName", col_name)
       if(!by_SiteName){cols <- cols[-1]}
 
+      # unlist and sort multi response answers
+
       col_tbl <- sub_dat %>%
+        mutate(!!col_name := str_split(get(col_name), pattern = "; "),
+               !!col_name := map(get(col_name), ~.x[order(sapply(.x, sort))]),
+               !!col_name :=  map_chr(get(col_name), ~stri_join(.x, collapse = '; '))) %>%
         group_by_at(cols) %>%
         count()
 
