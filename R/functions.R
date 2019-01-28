@@ -43,11 +43,15 @@ collapse_mult <- function(x){
     return(stri_join(min(x, na.rm = TRUE), max(x, na.rm = TRUE), sep = "-"))
   }
 
-  if(is.Date(x) | is.difftime(x)){
+  if(is.Date(x)){
+    return(stri_join(min(x, na.rm = TRUE), max(x, na.rm = TRUE), sep = " to "))
+  }
+
+  if(is.difftime(x)){
+    x <- kimisc::seconds.to.hms(as.numeric(x))
     return(stri_join(min(x, na.rm = TRUE), max(x, na.rm = TRUE), sep = " to "))
   }
 }
-
 
 # create unique values table
 create_unique_table <- function(dat, metanames, cols_to_ignore = c()){

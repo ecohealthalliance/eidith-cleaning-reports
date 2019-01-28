@@ -22,7 +22,8 @@ Depends:
     cyphr,
     sodium,
     rdrop2,
-    base64enc
+    base64enc,
+    kimisc
 Remotes:
     ecohealthalliance/eidith,
     noamross/openxlsx,

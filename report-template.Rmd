@@ -218,7 +218,6 @@ names(tables) <- tolower(table_names)
 for(i in seq_along(tables)){
   assign(names(tables[i]), tables[[i]])
 }
-
 ```
 
 ```{r event-site-map}
@@ -327,9 +326,15 @@ names(markup) <- tolower(table_names)
 
 markup_list <- compact(markup) #remove null
 
+tables <- tables[names(markup_list)]
+
+tables <- map(tables, ~mutate_if(.x, is.Date, as.character)) #date formatting before sending to excel
+
+tables <- map(tables, ~mutate_if(.x, is.difftime, as.character)) #time formatting before sending to excel
+
 wb <- get_highlighted_wb(
-  dfs = sapply(names(markup_list), get),
-  tab.names = names(markup_list),
+  dfs = tables,
+  tab.names = names(tables),
   markup.dfs = markup_list
 )
 
