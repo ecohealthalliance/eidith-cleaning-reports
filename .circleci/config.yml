@@ -12,7 +12,7 @@ jobs:
         - deps4-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml" }}
         - deps4-{{ .Branch }}
         - deps4
-    - run: R -e "devtools::install_deps(dependencies=TRUE)"
+    - run: Rscript -e "devtools::install_deps(dependencies=TRUE)"
     - save_cache:
         key: deps4-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml" }}
         paths:
@@ -33,12 +33,12 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-        - deps3-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml" }}
-        - deps3-{{ .Branch }}
-        - deps3
-    - run: R -e "devtools::install_deps(dependencies=TRUE)"
+        - deps4-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml" }}
+        - deps4-{{ .Branch }}
+        - deps4
+    - run: Rscript -e "devtools::install_deps(dependencies=TRUE)"
     - save_cache:
-        key: deps3-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml" }}
+        key: deps4-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml" }}
         paths:
         - /usr/local/lib/R/site-library
     - run: ./00-get-eidith-data.R
