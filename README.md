@@ -26,7 +26,8 @@ are in the first section of the HTML reports themselves, or you can find them
 in the `report-template.Rmd` file.
 
 `*.encrypted`, `dropbox_upload.R`, and files under the `.circleci/` directory are specific
-to EcoHealth Alliance's automated pipeline infrastructure.
+to EcoHealth Alliance's automated pipeline infrastructure and require EHA
+encryption keys to use.
 
 
 
