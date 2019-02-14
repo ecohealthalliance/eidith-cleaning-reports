@@ -1,3 +1,5 @@
+[![CircleCI Build Status](https://circleci.com/gh/ecohealthalliance/eidith-cleaning-reports.svg?style=svg&circle-token=33f2118a7d105d8eddfe688e7cd626268dc6e4f1)](https://circleci.com/gh/ecohealthalliance/eidith-cleaning-reports)
+
 # PREDICT data cleaning reports
 
 This repository contains R code to generate reports to support cleaning EIDITH data.
