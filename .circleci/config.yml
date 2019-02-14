@@ -15,7 +15,7 @@ jobs:
     - run:
         command: |
           Rscript -e "devtools::install_deps(dependencies=TRUE)"
-          Rscript -e "devtools::install_github('noamross/openxlsx', 'ropensci/cyphr')"
+          Rscript -e "devtools::install_github(c('noamross/openxlsx', 'ropensci/cyphr'))"
     - save_cache:
         key: deps4-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml" }}
         paths:
@@ -42,7 +42,7 @@ jobs:
     - run:
         command: |
           Rscript -e "devtools::install_deps(dependencies=TRUE)"
-          Rscript -e "devtools::install_github('noamross/openxlsx', 'ropensci/cyphr')"
+          Rscript -e "devtools::install_github(c('noamross/openxlsx', 'ropensci/cyphr'))"
     - save_cache:
         key: deps4-{{ .Branch }}-{{ checksum "DESCRIPTION" }}-{{ checksum ".circleci/config.yml" }}
         paths:
