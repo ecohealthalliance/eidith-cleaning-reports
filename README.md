@@ -6,6 +6,9 @@ This repository contains R code to generate reports to support cleaning EIDITH d
 
 Currently, reports for sites, animals, and specimens are implemented.
 
+To use, clone this repository and set it as your working directory. (You may open
+the `eidith-cleaning-reports.Rproj` file if you use RStudio.)
+
 Run `devtools::install_deps()` to get all packages required to run this code.
 These are defined in the DESCRIPTION file.
 
