@@ -9,16 +9,16 @@ Currently, reports for sites, animals, and specimens are implemented.
 To use, clone this repository and set it as your working directory. (You may open
 the `eidith-cleaning-reports.Rproj` file if you use RStudio.)
 
-Run `devtools::install_deps()` to get all packages required to run this code.
+Run `devtools::install_deps()` in R to get all packages required to run this code.
 These are defined in the DESCRIPTION file.
 
-Run `00-get-eidith-data.R` to download EIDITH data into the (currently empty)
+Run the `00-get-eidith-data.R` script to download EIDITH data into the (currently empty)
 `raw-eidith-data/`
 folder.  Data for all countries that you have access to will downloaded.
 This requires that you set `EIDITH_USERNAME` and `EIDITH_PASSWORD`
 environment variables.  See [`?eidith::ed_auth`](https://ecohealthalliance.github.io/eidith/reference/ed_auth.html) in the **eidith** R package for details.
 
-Modify `make.R` to specify for which countries to generate reports. Then run
+Modify the `make.R` script to specify for which countries to generate reports. Then run
 script to generate the reports.
 
 For each country, there will be
