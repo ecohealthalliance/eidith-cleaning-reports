@@ -12,6 +12,8 @@ the `eidith-cleaning-reports.Rproj` file if you use RStudio.)
 Run `devtools::install_deps()` in R to get all packages required to run this code.
 These are defined in the DESCRIPTION file.
 
+(Note that to install source packages you need a compiler toolchain installed.  On Windows, this is [Rtools](https://cran.r-project.org/bin/windows/Rtools/), on OSX it is [Xcode command line tools](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/))
+
 Run the `00-get-eidith-data.R` script to download EIDITH data into the (currently empty)
 `raw-eidith-data/`
 folder.  Data for all countries that you have access to will downloaded.
