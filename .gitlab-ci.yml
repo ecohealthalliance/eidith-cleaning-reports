@@ -8,7 +8,7 @@ before_script:
 cache:
   key: common-cache
   paths:
-    - /usr/local/lib/R/site-library
+    - /usr/local/lib/R/site-library/
 
 build:
   only:
