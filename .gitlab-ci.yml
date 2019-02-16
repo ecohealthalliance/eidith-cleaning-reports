@@ -9,21 +9,25 @@ cache:
   paths:
     - /usr/local/lib/R/site-library
 
-artifacts:
-  name: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - outputs/
-
 build:
   only:
     - pushes
+  artifacts:
+    name: "$CI_COMMIT_REF_SLUG"
+    paths:
+    - outputs/
   script:
     - ./00-get-eidith-data.R
     - ./make.R
 
+
 build_w_new_data_and_upload:
   only:
     - schedules
+  artifacts:
+    name: "$CI_COMMIT_REF_SLUG"
+    paths:
+    - outputs/
   script:
     - ./00-get-eidith-data.R
     - ./make.R
