@@ -1,5 +1,8 @@
 image: rocker/verse:latest
 
+variables:
+  - R_LIBS_USER: "$CI_PROJECT_DIR/.cache/"
+
 before_script:
   - apt-get update && apt-get install -y --no-install-recommends libudunits2-dev libsodium-dev libssl-dev
   - Rscript -e "devtools::install_deps(dependencies=TRUE)"
@@ -8,7 +11,7 @@ before_script:
 cache:
   key: common-cache
   paths:
-    - /usr/local/lib/R/site-library/
+    - .cache/
 
 build:
   only:
