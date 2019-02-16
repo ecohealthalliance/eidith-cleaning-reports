@@ -6,6 +6,7 @@ before_script:
   - Rscript -e "devtools::install_github(c('noamross/openxlsx', 'ropensci/cyphr'))"
 
 cache:
+  key: common-cache
   paths:
     - /usr/local/lib/R/site-library
 
