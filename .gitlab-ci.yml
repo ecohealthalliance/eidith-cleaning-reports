@@ -1,11 +1,8 @@
 image: rocker/verse:latest
 
-variables:
-  R_LIBS_USER: "$CI_PROJECT_DIR/.cache"
-
 before_script:
   - apt-get update && apt-get install -y --no-install-recommends --no-upgrade libudunits2-dev libsodium-dev libssl-dev rsync
-  - mkdir -p .cache; rsync -r --ignore-existing /usr/local/lib/R/site-library/ .cache/; rm -rf /usr/local/lib/R/site-library; ln -sf .cache /usr/local/lib/R/site-library
+  - mkdir -p $CI_PROJECT_DIR/.cache; rsync -r --ignore-existing /usr/local/lib/R/site-library/ $CI_PROJECT_DIR/.cache/; rm -rf /usr/local/lib/R/site-library; ln -sf $CI_PROJECT_DIR/.cache /usr/local/lib/R/site-library
   - ls .cache
   - ls /usr/local/lib/R/site-library
   - Rscript -e "devtools::install_deps(dependencies=TRUE)"
