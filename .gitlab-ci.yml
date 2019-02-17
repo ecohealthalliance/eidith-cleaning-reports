@@ -8,6 +8,7 @@ before_script:
   - Rscript -e "devtools::install_deps(dependencies=TRUE, libs = Sys.getenv('R_LIBS_USER'))"
   - Rscript -e "devtools::install_github(c('noamross/openxlsx', 'ropensci/cyphr'), libs = Sys.getenv('R_LIBS_USER'))"
 
+
 cache:
   key: common-cache
   paths:
