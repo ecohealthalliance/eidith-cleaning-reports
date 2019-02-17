@@ -4,10 +4,10 @@ variables:
   R_LIBS_USER: "$CI_PROJECT_DIR/.cache/"
 
 before_script:
-  - Rscript -e "cat(Sys.getenv('R_LIBS_USER'))"
+  - mkdir -p .cache
   - apt-get update && apt-get install -y --no-install-recommends libudunits2-dev libsodium-dev libssl-dev
-  - Rscript -e "devtools::install_deps(dependencies=TRUE, lib = Sys.getenv('R_LIBS_USER'))"
-  - Rscript -e "devtools::install_github(c('noamross/openxlsx', 'ropensci/cyphr'), lib = Sys.getenv('R_LIBS_USER'))"
+  - Rscript -e "devtools::install_deps(dependencies=TRUE, lib = '.cache')"
+  - Rscript -e "devtools::install_github(c('noamross/openxlsx', 'ropensci/cyphr'), lib = '.cache')"
 
 
 cache:
