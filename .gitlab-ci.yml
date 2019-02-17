@@ -3,8 +3,6 @@ image: rocker/verse:latest
 before_script:
   - apt-get update && apt-get install -y --no-install-recommends --no-upgrade libudunits2-dev libsodium-dev libssl-dev rsync
   - mkdir -p $CI_PROJECT_DIR/.cache; rsync -r --ignore-existing /usr/local/lib/R/site-library/ $CI_PROJECT_DIR/.cache/; rm -rf /usr/local/lib/R/site-library; ln -sf $CI_PROJECT_DIR/.cache /usr/local/lib/R/site-library
-  - ls .cache
-  - ls /usr/local/lib/R/site-library
   - Rscript -e "devtools::install_deps(dependencies=TRUE)"
   - Rscript -e "devtools::install_github(c('noamross/openxlsx', 'ropensci/cyphr'))"
 
