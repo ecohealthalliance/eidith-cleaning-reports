@@ -197,7 +197,7 @@ height="3.8in"}
 ```{r read-data}
 
 # all tables
-table_names <- c("Event", "Animal", "Specimen", "Human", "HumanAnimalProduction", "HumanCropProduction", "HumanExtractiveIndustry", "HumanHospitalWorker", "HumanHunter", "HumanMarket", "HumanRestaurant", "HumanSickPerson", "HumanTemporarySettlements", "HumanZoo")
+table_names <- c("Event", "Animal",  "Specimen", "Human", "HumanAnimalProduction", "HumanCropProduction", "HumanExtractiveIndustry", "HumanHospitalWorker", "HumanHunter", "HumanMarket", "HumanRestaurant", "HumanSickPerson", "HumanTemporarySettlements", "HumanZoo", "AnimalProduction", "CropProduction", "Dwellings", "ExtractiveIndustry", "MarketValueChain", "NaturalAreas", "WildlifeRestaurant",  "ZooSanctuary")
 
 # read in tables
 tables <- map(table_names, function(x){
