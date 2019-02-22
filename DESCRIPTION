@@ -19,12 +19,8 @@ Depends:
     stringi,
     cellranger,
     htmltools,
-    cyphr,
-    sodium,
     rdrop2,
     base64enc,
     kimisc
 Remotes:
-    ecohealthalliance/eidith,
-    noamross/openxlsx,
-    ropensci/cyphr
+    ecohealthalliance/eidith

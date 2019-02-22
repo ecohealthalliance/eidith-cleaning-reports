@@ -1,0 +1,36 @@
+image: rocker/verse:latest
+
+before_script:
+  - apt-get update && apt-get install -y --no-install-recommends --no-upgrade libudunits2-dev libsodium-dev libssl-dev rsync
+  - mkdir -p $CI_PROJECT_DIR/.cache; rsync -r --ignore-existing /usr/local/lib/R/site-library/ $CI_PROJECT_DIR/.cache/; rm -rf /usr/local/lib/R/site-library; ln -sf $CI_PROJECT_DIR/.cache /usr/local/lib/R/site-library
+  - Rscript -e "devtools::install_deps(dependencies=TRUE)"
+  - Rscript -e "devtools::install_github(c('noamross/openxlsx', 'ropensci/cyphr'))"
+
+cache:
+  key: common-cache
+  paths:
+    - .cache/
+
+build:
+  only:
+    - pushes
+  artifacts:
+    name: "$CI_COMMIT_REF_SLUG"
+    paths:
+    - outputs/
+  script:
+    - ./00-get-eidith-data.R
+    - ./make.R
+
+
+build_w_new_data_and_upload:
+  only:
+    - schedules
+  artifacts:
+    name: "$CI_COMMIT_REF_SLUG"
+    paths:
+    - outputs/
+  script:
+    - ./00-get-eidith-data.R
+    - ./make.R
+    - ./dropbox_upload.R
