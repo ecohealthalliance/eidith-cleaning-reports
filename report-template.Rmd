@@ -271,6 +271,10 @@ for (i in seq_along(tables)){
 ```
 
 ```{r highlight-data}
+# List event tables for specific highlighting rules 
+event_tabs <- c("Event", "AnimalProduction", "CropProduction", "Dwellings", "ExtractiveIndustry", "MarketValueChain", "NaturalAreas", "WildlifeRestaurant", "ZooSanctuary") #
+
+# Get highlights
 markup <- map(seq_along(tables), function(i){
 
   tab <- tables[[i]]
@@ -289,13 +293,13 @@ markup <- map(seq_along(tables), function(i){
   empty_index <- get_empty(tab, metanames, cols_to_ignore = c("Notes", "Comment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName"))
 
   # check for solo unique chars (by site name unless Event table)
-  solo_index <- get_solo_char(tab, by_SiteName = tab_name != "Event")
+  solo_index <- get_solo_char(tab, by_SiteName = !tab_name %in% event_tabs)
 
   # check for numeric outliers (not including lat/long)
   outlier_index <- get_outlier(tab)
 
   # check that EventName matches SiteName and EventDate
-  if(tab_name =="Event"){
+  if(tab_name %in% event_tabs){
     event_index <- get_event_mismatch(tab)
   }else{ event_index <- NULL }
 
@@ -305,7 +309,7 @@ markup <- map(seq_along(tables), function(i){
   }else{ specimen_index <- NULL }
 
   # check ID dups
-  dup_fields <- c("EventName", "AnimalID", "SpecimenID", "Q1 ParticipantID", rep("ParticipantID", 10))
+  dup_fields <- c("EventName", "AnimalID", "SpecimenID", "Q1 ParticipantID", rep("ParticipantID", 10), rep("EventName", 8))
   dup_id_index <- get_dups(tab, dup_fields[i])
 
   bind_rows(empty_index,
