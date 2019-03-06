@@ -54,39 +54,62 @@ collapse_mult <- function(x){
 }
 
 # create unique values table
-create_unique_table <- function(dat, metanames, cols_to_ignore = c()){
+create_unique_table <- function(dat, module, metanames, cols_to_ignore = c()){
 
   # check if null
   if(is.null(dat)){
     return(kable("No data in EIDITH", col.names = ""))
   }
 
-  # ignore specified columns (regex matching)
+  # specified columns to ignore (regex matching)
   cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
 
-  # special rules
-  ## count empty in col_na only if col_condition meets condition
-  condition_check <- read_csv(h("condition_check.csv")) %>%
+  # load special rules for counting empties in col_na only if col_condition meets condition
+  condition_check <- read_csv(h("condition_check_v2.csv")) %>%
+    filter(module_with_na == module) %>%
     mutate(condition = stri_split_regex(condition, ", "))
 
+  # for each column in dataframe
   out <-map_df(seq_along(dat), function(i){
 
-    # only include names selected from metadata
+    # only include col names selected from metadata
     if(!i %in% which(names(dat) %in% metanames)){return()}
 
     # ignore other specified columns
     if(i %in% which(str_detect(names(dat), cols_to_ignore_regex))){return()}
 
+    # get column data and name
     col_dat <- dat %>% pull(i)
     col_name <- names(dat)[i]
 
+    # evaluate whether special condition applies
     if(col_name %in% condition_check$col_na){
-      which_condition <- which(col_name == condition_check$col_na) # get index of condition
-      col_condition <- dat %>% pull(condition_check$col_condition[which_condition]) # get data from condition column
-      condition <- col_condition %in% unlist(condition_check$condition[which_condition]) # determine where condition column meets condition
-      if(condition_check$inverse[which_condition]){
-        condition <- !condition
-      }
+
+      # if condition applies, get index of condition in condition_check df
+      which_condition <- which(col_name == condition_check$col_na)
+
+      # for each condition
+      ct <- map_dfc(which_condition, function(j){
+
+        # get data from condition column
+        col_condition <- dat %>% pull(condition_check$col_condition[j]) %>% stri_split_regex(., ";")
+
+        # determine where condition column meets condition
+        map_lgl(col_condition, function(x){
+          cond <- any(x %in% unlist(condition_check$condition[j]))
+
+          # take inverse of condition if specified
+          if(condition_check$inverse[j]){
+            cond <- !cond
+          }
+          cond
+        })
+      })
+
+      # get single vector of condition
+      condition <- apply(ct, 1, all)
+
+      # subset column data for where condition is TRUE
       col_dat <- col_dat[condition]
     }
 
@@ -135,36 +158,57 @@ create_unique_table <- function(dat, metanames, cols_to_ignore = c()){
 }
 
 # identify empty cells
-get_empty <- function(dat, metanames, cols_to_ignore = c()){
+get_empty <- function(dat, module, metanames, cols_to_ignore = c()){
 
+  # specified columns to ignore (regex matching)
   cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
 
-  # special rules
-  ## check for NA in col_na only if col_condition meets condition
-  condition_check <- read_csv(h("condition_check.csv")) %>%
+  # load special rules for counting empties in col_na only if col_condition meets condition
+  condition_check <- read_csv(h("condition_check_v2.csv")) %>%
+    filter(module_with_na == module) %>%
     mutate(condition = stri_split_regex(condition, ", "))
 
   which_na <- map_df(seq_along(dat), function(i){
 
-    # only include names selected from metadata
+    # only include col names selected from metadata
     if(!i %in% which(names(dat) %in% metanames)){return()}
 
     # ignore other specified columns
     if(i %in% which(str_detect(names(dat), cols_to_ignore_regex))){return()}
 
-    # get NAs
+    # get column data and name and NAs
     col_dat <- dat %>% pull(i)
     col_name <- names(dat)[i]
     row_id <-  which(is.na(col_dat))
 
-    # apply special rules
+    # evaluate whether special condition applies
     if(col_name %in% condition_check$col_na){
-      which_condition <- which(col_name == condition_check$col_na) # get index of condition
-      col_condition <- dat %>% pull(condition_check$col_condition[which_condition]) # get data from condition column
-      condition <- col_condition %in% unlist(condition_check$condition[which_condition]) # determine where condition column meets condition
-      if(condition_check$inverse[which_condition]){
-        condition <- !condition
-      }
+
+      # if condition applies, get index of condition in condition_check df
+      which_condition <- which(col_name == condition_check$col_na)
+
+      # for each condition
+      ct <- map_dfc(which_condition, function(j){
+
+        # get data from condition column
+        col_condition <- dat %>% pull(condition_check$col_condition[j]) %>% stri_split_regex(., ";")
+
+        # determine where condition column meets condition
+        map_lgl(col_condition, function(x){
+          cond <- any(x %in% unlist(condition_check$condition[j]))
+
+          # take inverse of condition if specified
+          if(condition_check$inverse[j]){
+            cond <- !cond
+          }
+          cond
+        })
+      })
+
+      # get single vector of condition
+      condition <- apply(ct, 1, all)
+
+      # get row ids of NA and condition
       row_id <- which(is.na(col_dat) & condition)
     }
 
