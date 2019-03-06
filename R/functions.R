@@ -445,6 +445,12 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   style.list <- lapply(markup.dfs, function(x) {
 
+    if(nrow(x)==0){
+      return(
+        tibble(fill = "white", rows = list(2), cols = list(1), style = list(createStyle(fgFill = fill[1])))
+      )
+    }
+
     x %>%
       group_by(fill) %>%
       summarize(rows = list(row + 1),
