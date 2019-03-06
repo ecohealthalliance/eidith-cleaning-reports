@@ -27,7 +27,7 @@ Animal,NecropsyExamResult,ConditionAtSampling,Animal,alive (non-invasive sample 
 Animal,PreservationMethodIfDead,ConditionAtSampling,Animal,alive (non-invasive sample collection),TRUE
 Animal,ClinicalSignsIfSick,ConditionAtSampling,Animal,alive (non-invasive sample collection),TRUE
 Animal,NecropsyExamResult,NecropsyExam,Animal,necropsy,FALSE
-Animal,AnimalUseProducedSold,DiseaseTransmissionInterfaces,Animal,"animal production, wildlife restaurant, market and value chain",FALSE
+Animal,AnimalUseProducedSold,AnimalHumanInterfaces,Animal,"hunted, for sale in restaurant, for sale in small market (< 5 vendors), for sale in medium market (5-20 vendors), for sale in large market (> 20 vendors), at abattoir/slaughterhouse, at temporary holding facility in value chain, in transit along the value chain, animal or animal product destined for consumption",FALSE
 AnimalProduction,DesignatedSlaughterArea,SlaughteredButcheredOnsite,AnimalProduction,yes,FALSE
 CropProduction,PoultyFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
 CropProduction,CamelFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
@@ -44,7 +44,6 @@ CropProduction,CropsStoredOther,CropStorageAtSite,CropProduction,yes,FALSE
 Event,NbrBeds,DiseaseTransmissionInterfaces,Event,human hospital,FALSE
 Event,CommunityEngagementDate,CommunityEngagement,Event,yes,FALSE
 Event,VeterinarianCare,DiseaseTransmissionInterfaces,Event,human hospital,TRUE
-Event,DurationDays,DiseaseTransmissionInterfaces,Event,human hospital,TRUE
 Event,SamplingAreaSize,DiseaseTransmissionInterfaces,Event,human hospital,TRUE
 Event,AverageTripToWater,DrinkingWaterSource,Event,none observed,TRUE
 ExtractiveIndustry,CapacityForMedicalTreatment1,HealthcareFacilityAvailable1,ExtractiveIndustry,yes,FALSE
