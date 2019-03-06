@@ -128,12 +128,12 @@ HumanZoo,Q9 DisinfectantsUsedFor,Q8 UseDisinfectantToClean,HumanZoo,yes,FALSE
 HumanZoo,Q12 DesignatedAreaForAnimalWasteUsed,Q11 DesignatedAreaForAnimalWaste,HumanZoo,yes,FALSE
 HumanZoo,Q16 WhichAnimalsRaidFood,Q15 AnimalsRaidFood,HumanZoo,yes,FALSE
 HumanZoo,Q17 RaidingPrevention,Q15 AnimalsRaidFood,HumanZoo,yes,FALSE
-MarketValueChain,Q13 WhichPPE,Q12 PPEUsed,MarketValueChain,yes,FALSE
-MarketValueChain,Q14 WhenPPEUsed,Q12 PPEUsed,MarketValueChain,yes,FALSE
-MarketValueChain,Q15 PPEUsedHandling,Q12 PPEUsed,MarketValueChain,yes,FALSE
-MarketValueChain,Q18 DisinfectantsUsedFor,Q17 UseDisinfectantsToClean,MarketValueChain,yes,FALSE
-MarketValueChain,Q20 DesignatedAreaForAnimalWasteUsed,Q20 DesignatedAreaForAnimalWaste,MarketValueChain,yes,FALSE
-MarketValueChain,Q25 WhichAnimalsDestroyed,Q24 AnimalsDestroyed,MarketValueChain,yes,FALSE
+HumanMarket,Q13 WhichPPE,Q12 PPEUsed,MarketValueChain,yes,FALSE
+HumanMarket,Q14 WhenPPEUsed,Q12 PPEUsed,MarketValueChain,yes,FALSE
+HumanMarket,Q15 PPEUsedHandling,Q12 PPEUsed,MarketValueChain,yes,FALSE
+HumanMarket,Q18 DisinfectantsUsedFor,Q17 UseDisinfectantsToClean,MarketValueChain,yes,FALSE
+HumanMarket,Q20 DesignatedAreaForAnimalWasteUsed,Q20 DesignatedAreaForAnimalWaste,MarketValueChain,yes,FALSE
+HumanMarket,Q25 WhichAnimalsDestroyed,Q24 AnimalsDestroyed,MarketValueChain,yes,FALSE
 NaturalAreas,ProtectedAreaSize,ProtectedArea,NaturalAreas,yes,FALSE
 NaturalAreas,NameOfProtectedArea,ProtectedArea,NaturalAreas,yes,FALSE
 Specimen,DateOfSpecimenCollection (humans only),TaxaGroup,Specimen,humans,FALSE
