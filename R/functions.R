@@ -54,7 +54,7 @@ collapse_mult <- function(x){
 }
 
 # create unique values table
-create_unique_table <- function(dat, module, metanames, cols_to_ignore = c()){
+create_unique_table <- function(dat, module, metanames, cols_to_ignore = c(), do_not_count_empty =c()){
 
   # check if null
   if(is.null(dat)){
@@ -63,6 +63,9 @@ create_unique_table <- function(dat, module, metanames, cols_to_ignore = c()){
 
   # specified columns to ignore (regex matching)
   cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
+
+  # specified columns not to summarize count empty
+  cols_not_empty_regex <- stri_join(do_not_count_empty, collapse = "|")
 
   # load special rules for counting empties in col_na only if col_condition meets condition
   condition_check <- read_csv(h("condition_check_v2.csv")) %>%
@@ -118,7 +121,9 @@ create_unique_table <- function(dat, module, metanames, cols_to_ignore = c()){
 
     tibble(field = col_name,
            values = collapse_mult(col_dat),
-           count_empty = stri_join(missing_numerator, missing_denomenator, sep = "/"))
+           count_empty = ifelse(str_detect(col_name, cols_not_empty_regex),
+                                 "--",
+                                 stri_join(missing_numerator, missing_denomenator, sep = "/")))
   })
 
   mm.measures <- c("BatEarHeight", "BatTailLength", "BatHindFoodLength",
@@ -141,7 +146,7 @@ create_unique_table <- function(dat, module, metanames, cols_to_ignore = c()){
       ),
       count_empty =
         cell_spec(count_empty, format = "html",
-                  background = ifelse(grepl("^0/", count_empty), "#FFFFFF", "#EA8E9A")
+                  background = ifelse(grepl("^0/|--", count_empty), "#FFFFFF", "#EA8E9A")
         ),
       field = case_when(
         field %in% mm.measures ~ stri_join(field, " (mm)"),

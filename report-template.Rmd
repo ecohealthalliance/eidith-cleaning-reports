@@ -85,14 +85,14 @@ columns that have empty values to confirm whether you need to make
 corrections. Counts with zeros in the numerator indicate no empty
 values.             
 
-    -   For the majority of fields, the numerator is the total number of empty values for the given field and the denominator is the total number of rows in the table.  However, for certain fields, count_empty is adjusted to reflect the condition for which the field is relevant.  For example, CommunityEngagementDate is only required when CommunityEngagement = "yes".  Therefore, the numerator is the number of times CommunityEngagementDate is empty when CommunityEngagement = "yes", and the denominator is the number of times CommunityEngagement = "yes".
+    -   For the majority of fields, the numerator is the total number of empty values for the given field and the denominator is the total number of rows in the table.  For certain fields, count_empty is adjusted to reflect the condition for which the field is relevant.  For example, NbrBeds is only required when DiseaseTransmissionInterfaces = "human hospital".  Therefore, the numerator is the number of times NbrBeds is empty when DiseaseTransmissionInterfaces = "human hospital", and the denominator is the number of times DiseaseTransmissionInterfaces = "human hospital". In other cases, where a field is entirely optional and no response is required, the count_empty is shown as "--". 
 
     -   Sometimes it makes sense that you have mostly empty data. For example:
 
         -   If it says 165/165, then the values column will corroborate that and say “all empty”.  If you only responded to one outbreak, count\_empty might be 160/165, which means that only 5 outbreak events were noted, which probably makes sense.
         
         -   In other cases, empty values point to an error. For example, if you have 2/165 empty from the Season column, you will need to make corrections for those 2 rows that are empty their Season.
-
+        
 **Excel file report:**
 
 All of your data is listed in the Excel sheet (event, animal, specimens
@@ -265,7 +265,7 @@ for (i in seq_along(tables)){
   cat('\n')
   cat("<details>")
   cat(paste0("<summary>", tab_name,  " Summary</summary>") )
-  create_unique_table(tab, module = tab_name, metanames, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "Latitude", "Longitude")) %>% print()
+  create_unique_table(tab, module = tab_name, metanames, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "Latitude", "Longitude"), do_not_count_empty = c("[Nn]otes", "[Cc]omment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName", "InterfacesAnimalsSampled", "InterfacesHumansSampled", "CommunityEngagement", "TagAndOtherID", "[a-zA-Z]Width$", "[a-zA-Z]Height$", "[a-zA-Z]Length$", "^Container$", "StorageMethod", "StorageFacility", "StorageLocation", "LiveStateProv", "LiveLatitude", "LiveLongitude", "LivelihoodGroup\\(s\\)IfOther", "WorkLocation", "TravelledCity Loc [2-6]","Latitude Loc [2-6]", "Longitude Loc [2-6]", "Contact with", "[a-zA-Z]OutbreakDeaths")) %>% print()
   cat("</details>")
   cat('\n')
 }
