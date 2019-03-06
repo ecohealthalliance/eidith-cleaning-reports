@@ -291,7 +291,7 @@ markup <- map(seq_along(tables), function(i){
     pull(original_name)
   if(tab_name == "Specimen"){metanames <- c(metanames, "TaxaGroup")} # include taxa group in specimen table for human samples despite being marked as DROP
 
-  empty_index <- get_empty(tab, module = tab_name, metanames, cols_to_ignore = c("Notes", "Comment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName"))
+  empty_index <- get_empty(tab, module = tab_name, metanames, cols_to_ignore = c("[Nn]otes", "[Cc]omment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName", "InterfacesAnimalsSampled", "InterfacesHumansSampled", "CommunityEngagement", "TagAndOtherID", "[a-zA-Z]Width$", "[a-zA-Z]Height$", "[a-zA-Z]Length$", "^Container$", "StorageMethod", "StorageFacility", "StorageLocation", "LiveStateProv", "LiveLatitude", "LiveLongitude", "LivelihoodGroup\\(s\\)IfOther", "WorkLocation", "TravelledCity Loc [2-6]","Latitude Loc [2-6]", "Longitude Loc [2-6]", "Contact with", "[a-zA-Z]OutbreakDeaths"))
 
   # check for solo unique chars (by site name unless Event table)
   solo_index <- get_solo_char(tab, by_SiteName = !tab_name %in% event_tabs)
