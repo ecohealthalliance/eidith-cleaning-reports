@@ -4,7 +4,7 @@
 
 This repository contains R code to generate reports to support cleaning EIDITH data.
 
-Currently, reports for sites, animals, specimens, humans and human modules are implemented.
+Currently, reports for sites, site modules, animals, specimens, humans and human modules are implemented.
 
 To use, clone this repository and set it as your working directory. (You may open
 the `eidith-cleaning-reports.Rproj` file if you use RStudio.)
@@ -28,7 +28,10 @@ requiring inspection to see if they are correct.  More details on these outputs
 are in the first section of the HTML reports themselves, or you can find them
 in the `report-template.Rmd` file.
 
-`*.encrypted`, `dropbox_upload.R`, and files under the `.circleci/` directory are specific
+Please address questions related to data cleaning to technology@eidith.org.  For
+questions specific to this code, please [file an issue in the GitHub repository](https://github.com/ecohealthalliance/eidith-cleaning-reports/issues).
+
+`*.encrypted`, `dropbox_upload.R`, `.gitlab-ci.yml`, and files under the `.circleci/` directory are specific
 to EcoHealth Alliance's automated pipeline infrastructure and require EHA
 encryption keys to use.
 

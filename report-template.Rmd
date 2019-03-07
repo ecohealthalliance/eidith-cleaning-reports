@@ -2,7 +2,6 @@
 params:
   country: "Thailand"
 title: 'EIDITH <span style="color:red;">DRAFT</span> Data Cleaning Report: `r params$country`'
-author: "EcoHealth Alliance"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -26,6 +25,8 @@ metadata <- eidith::ed2_metadata() %>%
   filter(replacement_name!="DROP"| is.na(replacement_name)) 
 
 ```
+
+![](./media/predict-logos.png){width="100%"}
 
 #### _Click on the_ ▶ _︎arrows to expand sections._
 
@@ -186,7 +187,7 @@ fly; tick" in the newly inserted column.
 6.  Save the file it as an .xls file to retain the formatting.
 
 7.  Send the file to <technology@eidith.org> and CC your country liason
-and <rostal@ecohealthalliance.org>. Indicate in the email which
+and global surveillance lead. Indicate in the email which
 sheets have changes.
 
 ![](./media/image3.png){width="4.5in"
