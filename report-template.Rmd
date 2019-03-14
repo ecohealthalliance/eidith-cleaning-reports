@@ -1,8 +1,7 @@
 ---
 params:
   country: "Thailand"
-title: 'EIDITH <span style="color:red;">DRAFT</span> Data Cleaning Report: `r params$country`'
-author: "EcoHealth Alliance"
+title: 'EIDITH Data Cleaning Report: `r params$country`'
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -26,6 +25,8 @@ metadata <- eidith::ed2_metadata() %>%
   filter(replacement_name!="DROP"| is.na(replacement_name)) 
 
 ```
+
+![](./media/predict-logos.png){width="100%"}
 
 #### _Click on the_ ▶ _︎arrows to expand sections._
 
@@ -65,10 +66,8 @@ notes/comments, event name, and ID fields.
 
     -   **Character fields** (e.g. Season) contain the unique text along with the number of times each value was given. Responses that occur only once are highlighted green. 
 
-        -   Please confirm the **spelling** is correct and check **whether any fields should be combined**. For example. if you have the following interfaces: in house (1); IN HUMAN DWELLING (43); in human dwelling (108), you know that the correct interface is: “in human dwelling” (you can confirm that on the EIDITH data entry app), so the other interfaces need to be corrected. 
+        -   Please confirm the **spelling** is correct and check **whether any fields should be combined** in fields that have free-text entry. For example. if you have the following animal-human interfaces: in house (1); IN HUMAN DWELLING (43); in human dwelling (108), you know that the correct interface is: “in human dwelling” (you can confirm that on the EIDITH data entry app), so the other interfaces need to be corrected. 
         
-        -   Note, if you collected data during Year 1 or before the app was fully developed, you will have more corrections to make.  For example, empty values in the CommunityEngagement field of the Event table will need to be filled in.
-
         -   Keep an eye out for **values that were only entered a few times**. For example, if you have the following for drinkingWaterShared: no (154); unknown (8); yes (2), you may want to confirm that there were two events/sites that truly have shared drinking water, or whether that was a mistake and all of them should be no/unknown.
 
     -   **Numeric and Date fields** (e.g. DurationDays) contain the entire range for all values in that column (e.g. 2-27).
@@ -85,14 +84,14 @@ columns that have empty values to confirm whether you need to make
 corrections. Counts with zeros in the numerator indicate no empty
 values.             
 
-    -   For the majority of fields, the numerator is the total number of empty values for the given field and the denominator is the total number of rows in the table.  However, for certain fields, count_empty is adjusted to reflect the condition for which the field is relevant.  For example, CommunityEngagementDate is only required when CommunityEngagement = "yes".  Therefore, the numerator is the number of times CommunityEngagementDate is empty when CommunityEngagement = "yes", and the denominator is the number of times CommunityEngagement = "yes".
+    -   For the majority of fields, the numerator is the total number of empty values for the given field and the denominator is the total number of rows in the table.  For certain fields, count_empty is adjusted to reflect the condition for which the field is relevant.  For example, NbrBeds is only required when DiseaseTransmissionInterfaces = "human hospital".  Therefore, the numerator is the number of times NbrBeds is empty when DiseaseTransmissionInterfaces = "human hospital", and the denominator is the number of times DiseaseTransmissionInterfaces = "human hospital". In other cases, where a field is entirely optional and no response is required, the count_empty is shown as "--". 
 
     -   Sometimes it makes sense that you have mostly empty data. For example:
 
         -   If it says 165/165, then the values column will corroborate that and say “all empty”.  If you only responded to one outbreak, count\_empty might be 160/165, which means that only 5 outbreak events were noted, which probably makes sense.
         
         -   In other cases, empty values point to an error. For example, if you have 2/165 empty from the Season column, you will need to make corrections for those 2 rows that are empty their Season.
-
+        
 **Excel file report:**
 
 All of your data is listed in the Excel sheet (event, animal, specimens
@@ -121,7 +120,7 @@ with values that need to be checked are colored:
 
     -   On the event table, values are highlighted if they are unique within the *entire* table. On all other tables, values are highlighted if they are unique for the given *site name. *
 
-    -   A unique value may be fine (e.g., an independent site that was only visited one time at the start of PREDICT 2), or it could indicate a mistake (e.g. in Season if it is spelled “Dri” instead of “Dry”).
+    -   A unique value may be fine (e.g., an independent site that was only visited one time at the start of PREDICT 2), or it could indicate a mistake.
 
     -   While the system will pick up these misspellings, if you spell it wrong multiple times it won’t show up as an issue in the Excel file – though you should see it in the list of unique values on the html file.
 
@@ -140,8 +139,7 @@ unique (i.e., EventName, Animal\_ID, Specimen\_ID, ParticipantID)
 
 -   Orange means that the event name does not match the site name and
 date or that the specimen name does not match the indicated sample
-type or medium (based on the original definitions at the launch of
-the EIDITH App). If you were collecting samples before the naming
+type or medium (based on the original definitions at the launch of EIDITH). If you were collecting samples before the naming
 became standardized, you will notice many issues.
 
     -   Please confirm with the field data that the specimen type and
@@ -162,7 +160,9 @@ To facilitate the cleaning please make use of the filter buttons.  You can filte
 
 **Making and submitting corrections:**
 
-If you need to make a correction, you can edit the provided Excel sheet
+*Please note:* Species, Q25 (other livelihoods) and Q29/31 (other symptoms) from the human questionnaire and the Illness module are being reviewed and cleaned by a global team.  Please do not submit changes for this data - contact technology@eidith.org to add/update season data as these are generated by EIDITH.
+
+For all other data, if you need to make a correction, you can edit the provided Excel sheet
 using the following steps. See the example image below.
 
 1.  In Excel, insert a column to the right of the data that needs to be
@@ -186,7 +186,7 @@ fly; tick" in the newly inserted column.
 6.  Save the file it as an .xls file to retain the formatting.
 
 7.  Send the file to <technology@eidith.org> and CC your country liason
-and <rostal@ecohealthalliance.org>. Indicate in the email which
+and global surveillance lead. Indicate in the email which
 sheets have changes.
 
 ![](./media/image3.png){width="4.5in"
@@ -250,6 +250,7 @@ event %>%
 </details>
 
 ```{r summary-tables, results='asis'}
+
 for (i in seq_along(tables)){
 
   tab <- tables[[i]]
@@ -264,7 +265,7 @@ for (i in seq_along(tables)){
   cat('\n')
   cat("<details>")
   cat(paste0("<summary>", tab_name,  " Summary</summary>") )
-  create_unique_table(tab, metanames, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "Latitude", "Longitude")) %>% print()
+  create_unique_table(tab, module = tab_name, metanames, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "Latitude", "Longitude"), do_not_count_empty = c("[Nn]otes", "[Cc]omment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName", "InterfacesAnimalsSampled", "InterfacesHumansSampled", "CommunityEngagement", "TagAndOtherID", "[a-zA-Z]Width$", "[a-zA-Z]Height$", "[a-zA-Z]Length$", "^Container$", "StorageMethod", "StorageFacility", "StorageLocation", "LiveStateProv", "LiveLatitude", "LiveLongitude", "LivelihoodGroup\\(s\\)IfOther", "WorkLocation", "TravelledCity Loc [2-6]","Latitude Loc [2-6]", "Longitude Loc [2-6]", "Contact with", "[a-zA-Z]OutbreakDeaths")) %>% print()
   cat("</details>")
   cat('\n')
 }
@@ -290,7 +291,7 @@ markup <- map(seq_along(tables), function(i){
     pull(original_name)
   if(tab_name == "Specimen"){metanames <- c(metanames, "TaxaGroup")} # include taxa group in specimen table for human samples despite being marked as DROP
 
-  empty_index <- get_empty(tab, metanames, cols_to_ignore = c("Notes", "Comment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName"))
+  empty_index <- get_empty(tab, module = tab_name, metanames, cols_to_ignore = c("[Nn]otes", "[Cc]omment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName", "InterfacesAnimalsSampled", "InterfacesHumansSampled", "CommunityEngagement", "TagAndOtherID", "[a-zA-Z]Width$", "[a-zA-Z]Height$", "[a-zA-Z]Length$", "^Container$", "StorageMethod", "StorageFacility", "StorageLocation", "LiveStateProv", "LiveLatitude", "LiveLongitude", "LivelihoodGroup\\(s\\)IfOther", "WorkLocation", "TravelledCity Loc [2-6]","Latitude Loc [2-6]", "Longitude Loc [2-6]", "Contact with", "[a-zA-Z]OutbreakDeaths"))
 
   # check for solo unique chars (by site name unless Event table)
   solo_index <- get_solo_char(tab, by_SiteName = !tab_name %in% event_tabs)

@@ -1,0 +1,147 @@
+module_with_na,col_na,col_condition,module_with_condition,condition,inverse
+Animal,PreservationMethodIfDead,NecropsyExam,Animal,necropsy,FALSE
+Animal,ClinicalSignsIfSick,HealthStatus,Animal,"injured, sick",FALSE
+Animal,ClinicalSignsOther,ClinicalSignsIfSick,Animal,other,FALSE
+Animal,BatEarHeight,TaxaGroup,Animal,bats,FALSE
+Animal,BatTailLength,TaxaGroup,Animal,bats,FALSE
+Animal,BatHindFoodLength,TaxaGroup,Animal,bats,FALSE
+Animal,BatForearmLength,TaxaGroup,Animal,bats,FALSE
+Animal,BatHeadBodyLength,TaxaGroup,Animal,bats,FALSE
+Animal,BatWeight,TaxaGroup,Animal,bats,FALSE
+Animal,NHPBodyLength,TaxaGroup,Animal,non-human primates,FALSE
+Animal,NHPHeadLength,TaxaGroup,Animal,non-human primates,FALSE
+Animal,NHPRightEarWidth,TaxaGroup,Animal,non-human primates,FALSE
+Animal,NHPHeadWidth,TaxaGroup,Animal,non-human primates,FALSE
+Animal,NHPRightEarHeight,TaxaGroup,Animal,non-human primates,FALSE
+Animal,NHPLeftEarWidth,TaxaGroup,Animal,non-human primates,FALSE
+Animal,NHPLeftEarHeight,TaxaGroup,Animal,non-human primates,FALSE
+Animal,NHPWeight,TaxaGroup,Animal,non-human primates,FALSE
+Animal,RodentOtherRightEarHeight,TaxaGroup,Animal,rodents/shrews,FALSE
+Animal,RodentOtherTailLength,TaxaGroup,Animal,rodents/shrews,FALSE
+Animal,RodentOtherRHindFoot,TaxaGroup,Animal,rodents/shrews,FALSE
+Animal,RodentOtherBodyLength,TaxaGroup,Animal,rodents/shrews,FALSE
+Animal,RodentOtherWeight,TaxaGroup,Animal,rodents/shrews,FALSE
+Animal,ReleasedAlive,ConditionAtSampling,Animal,alive (non-invasive sample collection),TRUE
+Animal,NecropsyExam,ConditionAtSampling,Animal,alive (non-invasive sample collection),TRUE
+Animal,NecropsyExamResult,ConditionAtSampling,Animal,alive (non-invasive sample collection),TRUE
+Animal,PreservationMethodIfDead,ConditionAtSampling,Animal,alive (non-invasive sample collection),TRUE
+Animal,ClinicalSignsIfSick,ConditionAtSampling,Animal,alive (non-invasive sample collection),TRUE
+Animal,NecropsyExamResult,NecropsyExam,Animal,necropsy,FALSE
+Animal,AnimalUseProducedSold,AnimalHumanInterfaces,Animal,"hunted, for sale in restaurant, for sale in small market (< 5 vendors), for sale in medium market (5-20 vendors), for sale in large market (> 20 vendors), at abattoir/slaughterhouse, at temporary holding facility in value chain, in transit along the value chain, animal or animal product destined for consumption",FALSE
+AnimalProduction,DesignatedSlaughterArea,SlaughteredButcheredOnsite,AnimalProduction,yes,FALSE
+CropProduction,PoultyFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
+CropProduction,CamelFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
+CropProduction,CattleFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
+CropProduction,SwineFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
+CropProduction,BatGuanoFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
+CropProduction,BirdGuanoFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
+CropProduction,GoatFertilizer,FertilizersUsed,CropProduction,animal manure or guano,FALSE
+CropProduction,CropsStoredInDwellings,CropStorageAtSite,CropProduction,yes,FALSE
+CropProduction,CropsStoredOutsideSacks,CropStorageAtSite,CropProduction,yes,FALSE
+CropProduction,CropsStoredSiloGranary,CropStorageAtSite,CropProduction,yes,FALSE
+CropProduction,CropsStoredNotObserved,CropStorageAtSite,CropProduction,yes,FALSE
+CropProduction,CropsStoredOther,CropStorageAtSite,CropProduction,yes,FALSE
+Event,NbrBeds,DiseaseTransmissionInterfaces,Event,human hospital,FALSE
+Event,CommunityEngagementDate,CommunityEngagement,Event,yes,FALSE
+Event,VeterinarianCare,DiseaseTransmissionInterfaces,Event,human hospital,TRUE
+Event,SamplingAreaSize,DiseaseTransmissionInterfaces,Event,human hospital,TRUE
+Event,AverageTripToWater,DrinkingWaterSource,Event,none observed,TRUE
+ExtractiveIndustry,CapacityForMedicalTreatment1,HealthcareFacilityAvailable1,ExtractiveIndustry,yes,FALSE
+ExtractiveIndustry,CapacityForPreventativeServices1,HealthcareFacilityAvailable1,ExtractiveIndustry,yes,FALSE
+ExtractiveIndustry,PostedPreparednessPlan1,HealthcareFacilityAvailable1,ExtractiveIndustry,yes,FALSE
+ExtractiveIndustry,CapacityForPharmacyServices1,HealthcareFacilityAvailable1,ExtractiveIndustry,yes,FALSE
+Human,Q18 WaterTreatment,Q17 WaterTreated?,Human,yes,FALSE
+Human,Q37 TravelledCity Loc 1,Q36 Travelled,Human,yes,FALSE
+Human,Q37 Latitude Loc 1,Q36 Travelled,Human,yes,FALSE
+Human,Q37 Longitude Loc 1,Q36 Travelled,Human,yes,FALSE
+HumanAnimalProduction,Q8 WhoPaysGrowCrops,Q7 OnSiteFoodProduction,HumanAnimalProduction,yes,FALSE
+HumanAnimalProduction,Q10 MeatSource,Q9 BushMeatOnsite,HumanAnimalProduction,yes,FALSE
+HumanAnimalProduction,Q13 WhichPPE,Q12 PPEUsed,HumanAnimalProduction,yes,FALSE
+HumanAnimalProduction,Q16 DisinfectantsUsedFor,Q15 UseDisinfectantToClean,HumanAnimalProduction,yes,FALSE
+HumanAnimalProduction,Q5 LiveAnimalsStoredNight,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q6 QuarantineForNewAnimals,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q7 OnSiteFoodProduction,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q17 AnimalEnclosuresCleanedFrequency,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q20 DesignatedAreaForAnimalWasteUsed,Q19 DesignatedAreaForAnimalWaste,HumanAnimalProduction,yes,FALSE
+HumanAnimalProduction,Q21 AnimalsReceiveVetCareinYear,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q23 ActionWhenAnimalsSick,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q24 AnimalsQuarantinedOrDestroyed,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q25 WhichAnimalsQuarantinedOrDestroyed,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q26 OutbreakInYear,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 RodentsOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 BatsOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 NHPOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 BirdsOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 CarnivoresOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 UngulatesOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 PangolinsOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 PoultryOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 GoatsOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 CamelsOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 SwineOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 CattleOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 HorsesOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 DogsOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q27 CatsOutbreakDeaths,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q28 AnimalsRaidFood,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q29 WhichAnimalsRaidFood,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanAnimalProduction,Q30 RaidingPrevention,Q4 AnimalsRaised,HumanAnimalProduction,none,TRUE
+HumanCropProduction,Q8 MeatSource,Q7 MeatOnsite,HumanCropProduction,yes,FALSE
+HumanCropProduction,Q11 DesignatedAreaForRubbishUsed,Q10 DesignatedAreaForRubbish,HumanCropProduction,yes,FALSE
+HumanCropProduction,Q13 WhichAnimalsRaidFood,Q12 AnimalsRaidFood,HumanCropProduction,yes,FALSE
+HumanExtractiveIndustry,Q7 WhoPaysGrowCrops,Q6 OnSiteFoodProduction,HumanExtractiveIndustry,yes,FALSE
+HumanExtractiveIndustry,Q7 WhoPaysGrowCrops,Q6 OnSiteFoodProduction,HumanExtractiveIndustry,yes,FALSE
+HumanExtractiveIndustry,Q9 MeatSource,Q8 BushMeatOnsite,HumanExtractiveIndustry,yes,FALSE
+HumanExtractiveIndustry,Q12 DesignatedAreaForRubbishUsed,Q11 DesignatedAreaForRubbish,HumanExtractiveIndustry,yes,FALSE
+HumanExtractiveIndustry,Q14 WhichAnimalsRaidFood,Q13 AnimalsRaidFood,HumanExtractiveIndustry,yes,FALSE
+HumanHospitalWorker,Q3 WhichPPE,Q2 PPEUsed,HumanHospitalWorker,yes,FALSE
+HumanHunter,Q2 MethodsUsedToHuntTrap,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q3 RodentsHuntTrapPurpose,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q3 BatsHuntTrapPurpose,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q3 NHPHuntTrapPurpose,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q3 BirdsHuntTrapPurpose,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q3 CarnivoresHuntTrapPurpose,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q3 UngulatesHuntTrapPurpose,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q3 PangolinsHuntTrapPurpose,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q4 ExposedToBloodLastYear,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q5 ScratchedBittenLastYear,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q6 OutbreakLastYear,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q7 OutbreakDeaths,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q8 ActionWhenDeadAnimalFound,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q9 TransportDeadAnimal,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q10 PPEUsed,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q11 WhichPPE,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q12 WhenPPEUsed,Q1 AnimalsHunted,HumanHunter,none,TRUE
+HumanHunter,Q7 OutbreakDeaths,Q6 OutbreakLastYear,HumanHunter,yes,FALSE
+HumanHunter,Q11 WhichPPE,Q10 PPEUsed,HumanHunter,yes,FALSE
+HumanHunter,Q12 WhenPPEUsed,Q10 PPEUsed,HumanHunter,yes,FALSE
+HumanSickPerson,Q12 MonthsPregnant,Q11 PregnancyStatus,HumanSickPerson,yes,FALSE
+HumanTemporarySettlements,Q7 MeatOnsite,Q6 OnSiteFoodProduction,HumanTemporarySettlements,yes,FALSE
+HumanTemporarySettlements,Q8 MeatSource,Q6 OnSiteFoodProduction,HumanTemporarySettlements,yes,FALSE
+HumanTemporarySettlements,Q12 DesignatedAreaForRubbishUsed,Q11 DesignatedAreaForRubbish,HumanTemporarySettlements,yes,FALSE
+HumanTemporarySettlements,Q14 WhichAnimalsRaidFood,Q13 AnimalsRaidFood,HumanTemporarySettlements,yes,FALSE
+HumanTemporarySettlements,Q15 RaidingPrevention,Q13 AnimalsRaidFood,HumanTemporarySettlements,yes,FALSE
+HumanZoo,Q6 PPEquipment,Q5 PPEUsed,HumanZoo,yes,FALSE
+HumanZoo,Q7 WhenPPEUsed,Q5 PPEUsed,HumanZoo,yes,FALSE
+HumanZoo,Q9 DisinfectantsUsedFor,Q8 UseDisinfectantToClean,HumanZoo,yes,FALSE
+HumanZoo,Q12 DesignatedAreaForAnimalWasteUsed,Q11 DesignatedAreaForAnimalWaste,HumanZoo,yes,FALSE
+HumanZoo,Q16 WhichAnimalsRaidFood,Q15 AnimalsRaidFood,HumanZoo,yes,FALSE
+HumanZoo,Q17 RaidingPrevention,Q15 AnimalsRaidFood,HumanZoo,yes,FALSE
+HumanMarket,Q13 WhichPPE,Q12 PPEUsed,MarketValueChain,yes,FALSE
+HumanMarket,Q14 WhenPPEUsed,Q12 PPEUsed,MarketValueChain,yes,FALSE
+HumanMarket,Q15 PPEUsedHandling,Q12 PPEUsed,MarketValueChain,yes,FALSE
+HumanMarket,Q18 DisinfectantsUsedFor,Q17 UseDisinfectantsToClean,MarketValueChain,yes,FALSE
+HumanMarket,Q20 DesignatedAreaForAnimalWasteUsed,Q20 DesignatedAreaForAnimalWaste,MarketValueChain,yes,FALSE
+HumanMarket,Q25 WhichAnimalsDestroyed,Q24 AnimalsDestroyed,MarketValueChain,yes,FALSE
+NaturalAreas,ProtectedAreaSize,ProtectedArea,NaturalAreas,yes,FALSE
+NaturalAreas,NameOfProtectedArea,ProtectedArea,NaturalAreas,yes,FALSE
+Specimen,DateOfSpecimenCollection (humans only),TaxaGroup,Specimen,humans,FALSE
+Specimen,TimeOfSpecimenCollection (humans only),TaxaGroup,Specimen,humans,FALSE
+Specimen,SpecimenCollectedForDiagnosis (humans only),TaxaGroup,Specimen,humans,FALSE
+WildlifeRestaurant,Q6 AnimalSource,Q5 LiveAnimalsOnSite,WildlifeRestaurant,yes,FALSE
+WildlifeRestaurant,Q11 PPEquipment,Q10 PPEUsed1,WildlifeRestaurant,yes,FALSE
+WildlifeRestaurant,Q12 WhenPPEUsed1,Q10 PPEUsed1,WildlifeRestaurant,yes,FALSE
+WildlifeRestaurant,Q14 DisinfectantsUsedFor,Q13 UseDisinfectantToClean,WildlifeRestaurant,yes,FALSE
+WildlifeRestaurant,Q16 DesignatedAreaForRubbishUsed,Q15 DesignatedAreaRubbish,WildlifeRestaurant,yes,FALSE
+WildlifeRestaurant,Q18 WhichAnimalsRaidFood,Q17 AnimalsRaidFood,WildlifeRestaurant,yes,FALSE
+WildlifeRestaurant,Q19 RaidingPrevention,Q17 AnimalsRaidFood,WildlifeRestaurant,yes,FALSE
