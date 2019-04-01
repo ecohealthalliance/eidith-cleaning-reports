@@ -11,7 +11,7 @@ countries <- c(
   "Jordan",
   "Liberia",
   "Republic of Congo",
-  "South Sudan",
+ # "South Sudan",
   "Thailand"
 )
 
