@@ -329,7 +329,7 @@ get_specimen_mismatch <- function(dat){
     mutate(specimen_name_check = all(ID_check, specimen_check, medium_check))
 
   # output mismatches
-  tibble(row = which(which_mismatch$specimen_name_check==FALSE), col = grep("SpecimenID", names(dat)),
+  tibble(row = which(which_mismatch$specimen_name_check==FALSE), col = which(names(dat)=="SpecimenID"),
          flag = "Mismatch between SpecimenID and Animal/Human ID, SpecimenType, and/or Medium. Abbreviated code in SpecimenID may not be recognized.", fill = "orange")
 }
 
@@ -340,7 +340,7 @@ get_dups <- function(dat, col_name){
     select(!!col_name) %>%
     mutate(is_dup = duplicated(.)|duplicated(., fromLast = TRUE))
 
-  tibble(row = which(which_dup$is_dup==TRUE), col = grep(col_name, names(dat)),
+  tibble(row = which(which_dup$is_dup==TRUE), col = which(names(dat)==col_name),
          flag = "duplicate identifier", fill = "purple")
 
 }
