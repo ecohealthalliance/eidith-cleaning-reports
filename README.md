@@ -17,6 +17,9 @@ Run the `00-get-eidith-data.R` script to download EIDITH data into the (currentl
 folder.  Data for all countries that you have access to will downloaded.
 This requires that you set `EIDITH_USERNAME` and `EIDITH_PASSWORD`
 environment variables.  See [`?eidith::ed_auth`](https://ecohealthalliance.github.io/eidith/reference/ed_auth.html) in the **eidith** R package for details.
+You can limit the countries' data you download data for by setting the "country"
+argument in that script.  Note you may need to update to the latest version of
+the **eidith** package for this.
 
 Modify the `make.R` script to specify for which countries to generate reports. Then run
 script to generate the reports.

@@ -1,12 +1,13 @@
 # data-cleaning functions here
 download_raw_p2_data <- function(endpoints = p2_api_endpoints(),
                                  output_dir = h("raw-eidith-data"),
-                                 verbose = TRUE) {
+                                 verbose = TRUE,
+                                 country = NULL) {
   if (!dir.exists(output_dir)) dir.create(output_dir)
 
   files <- purrr::walk(endpoints, function(x) {
 
-    dat <- eidith::ed2_get(x, postprocess = FALSE, verbose = verbose)
+    dat <- eidith::ed2_get(x, postprocess = FALSE, verbose = verbose, country = country)
     if (!is.null(dat$Country)) {
       datlist <- split(dat, dat$Country)
       purrr::walk(datlist, function(z) {
