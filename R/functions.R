@@ -309,6 +309,17 @@ get_event_mismatch <- function(dat){
          flag = "EventName does not match EventDate or SiteName", fill = "orange")
 }
 
+get_notmapped <- function(dat){
+
+  # Get not mapped sites
+  which_notmapped <- dat %>%
+    mutate(notmapped_check = ConcurrentSamplingSite != "Not Mapped")
+
+  # Output the error tibble
+  tibble(row = which(which_notmapped$notmapped_check == FALSE), col = grep("ConcurrentSamplingSite", names(dat)),
+         flag = "ConcurreentSamplingSite is Not Mapped", fill = "red")
+}
+
 # check that SpecimenID matches Animal ID and SpecimentType/Medium
 get_specimen_mismatch <- function(dat){
 

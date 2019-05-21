@@ -23,7 +23,6 @@ walk(list.files(h("R/"), full.names = TRUE),
 country <- params$country
 metadata <- eidith::ed2_metadata() %>% 
   filter(replacement_name!="DROP"| is.na(replacement_name)) 
-
 ```
 
 ![](./media/predict-logos.png){width="100%"}
@@ -302,8 +301,16 @@ markup <- map(seq_along(tables), function(i){
   # check that EventName matches SiteName and EventDate
   if(tab_name %in% event_tabs){
     event_index <- get_event_mismatch(tab)
-  }else{ event_index <- NULL }
+  }else{ 
+    event_index <- NULL
+    }
 
+  if (tab_name == "Event"){
+        notmapped_index <- get_notmapped(tab)
+  } else {
+        notmapped_index <- NULL
+  }
+  
   # check that Speciman matches `Animal/Human ID` and SpecimenType and Media
   if(tab_name =="Specimen"){
     specimen_index <- get_specimen_mismatch(tab)
@@ -317,6 +324,7 @@ markup <- map(seq_along(tables), function(i){
             solo_index,
             outlier_index,
             event_index,
+            notmapped_index,
             specimen_index,
             dup_id_index)
 })
