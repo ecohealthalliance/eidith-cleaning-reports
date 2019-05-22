@@ -8,7 +8,7 @@ OP,oropharyngeal swab,anterior
 SA,saliva,anterior
 ST,sputum,anterior
 BC,blood clot,blood products
-BL,blood (whole),blood products
+BL,blood \(whole\),blood products
 BU,buffy coat,blood products
 BP,plasma,blood products
 RB,red blood cells,blood products
@@ -25,14 +25,14 @@ CL,cloacal swab,posterior
 GU,urine/feces combined (guano),posterior
 FE,feces,posterior
 PS,prepucial swab,posterior
-US,urine/urogenital swab,posterior
-ZZ,other,others
+US,(urine\/urogenital swab|urine),posterior
+ZZ,(^other|^$),others
 EV,environmental sample,others
 AD,adrenal,tissue
 BR,brain,tissue
 CS,cecum,tissue
 CO,colon,tissue
-DU,duodendum,tissue
+DU,duodenum,tissue
 HE,heart,tissue
 KI,kidney,tissue
 LI,liver,tissue
@@ -44,10 +44,11 @@ PZ,pancreas,tissue
 CI,small intestine,tissue
 SP,spleen,tissue
 TE,testes,tissue
-ZT,other,tissue
+ZT,(^other|^$),tissue
 T,trizol,storage medium
-V,viral transport media (VTM),storage medium
+V,viral transport media \(VTM\),storage medium
 F,10% buffered formalin,storage medium
 L,lysis buffer,storage medium
 R,RNA later,storage medium
 N,no medium,storage medium
+O,(other|\d\d\% ethanol),storage medium

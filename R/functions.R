@@ -309,11 +309,21 @@ get_event_mismatch <- function(dat){
          flag = "EventName does not match EventDate or SiteName", fill = "orange")
 }
 
+get_notmapped <- function(dat){
+
+  # Get not mapped sites
+  which_notmapped <- dat %>%
+    mutate(notmapped_check = ConcurrentSamplingSite != "Not Mapped")
+
+  # Output the error tibble
+  tibble(row = which(which_notmapped$notmapped_check == FALSE), col = grep("ConcurrentSamplingSite", names(dat)),
+         flag = "ConcurrentSamplingSite is Not Mapped", fill = "red")
+}
+
 # check that SpecimenID matches Animal ID and SpecimentType/Medium
 get_specimen_mismatch <- function(dat){
 
   lookup <- read_csv(here::here("specimen_lookup.csv"))
-
   specimen_lookup <- lookup %>% filter(type != "storage medium") %>% select(-type) %>% rename(full_specimen = full)
   medium_lookup <- lookup %>% filter(type == "storage medium") %>% select(-type) %>% rename(full_medium = full)
 
@@ -323,8 +333,8 @@ get_specimen_mismatch <- function(dat){
     left_join(specimen_lookup, by = c("specimen_abbr" = "code")) %>%
     left_join(medium_lookup, by = c("medium_abbr" = "code")) %>%
     mutate(ID_check = id == `Animal/Human ID`,
-           specimen_check = tolower(full_specimen) == tolower(SpecimenType),
-           medium_check = tolower(full_medium) == tolower(Medium)) %>%
+           specimen_check =  map2_lgl(tolower(SpecimenType), full_specimen, ~stri_detect_regex(.x, .y, case_insensitive = TRUE)),
+           medium_check = map2_lgl(tolower(Medium), full_medium, ~stri_detect_regex(.x, .y,  case_insensitive = TRUE))) %>%
     replace_na(list(specimen_check = FALSE, medium_check = FALSE)) %>%
     rowwise() %>%
     mutate(specimen_name_check = all(ID_check, specimen_check, medium_check))
