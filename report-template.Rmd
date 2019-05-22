@@ -265,7 +265,7 @@ for (i in seq_along(tables)){
   cat('\n')
   cat("<details>")
   cat(paste0("<summary>", tab_name,  " Summary</summary>") )
-  create_unique_table(tab, module = tab_name, metanames, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "Latitude", "Longitude"), do_not_count_empty = c("[Nn]otes", "[Cc]omment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName", "InterfacesAnimalsSampled", "InterfacesHumansSampled", "CommunityEngagement", "TagAndOtherID", "[a-zA-Z]Width$", "[a-zA-Z]Height$", "[a-zA-Z]Length$", "^Container$", "StorageMethod", "StorageFacility", "StorageLocation", "LiveStateProv", "LiveLatitude", "LiveLongitude", "LivelihoodGroup\\(s\\)IfOther", "WorkLocation", "TravelledCity Loc [2-6]","Latitude Loc [2-6]", "Longitude Loc [2-6]", "Contact with", "[a-zA-Z]OutbreakDeaths")) %>% print()
+  create_unique_table(tab, module = tab_name, metanames, cols_to_ignore = c("Notes", "Comment", "SiteName", "ID", "EventName", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "Latitude", "Longitude"), do_not_count_empty = c("[Nn]otes", "[Cc]omment", "^Class$", "^Order$", "^Family$", "^Genus$", "Species", "OutbreakName", "InterfacesAnimalsSampled", "InterfacesHumansSampled", "CommunityEngagement", "TagAndOtherID", "[a-zA-Z]Width$", "[a-zA-Z]Height$", "[a-zA-Z]Length$", "^Container$", "StorageMethod", "StorageFacility", "StorageLocation", "LiveStateProv", "LiveLatitude", "LiveLongitude", "LivelihoodGroup\\(s\\)IfOther", "WorkLocation", "TravelledCity Loc [2-6]","Latitude Loc [2-6]", "Longitude Loc [2-6]", "Contact with", "[a-zA-Z]OutbreakDeaths", "Photos")) %>% print()
   cat("</details>")
   cat('\n')
 }
