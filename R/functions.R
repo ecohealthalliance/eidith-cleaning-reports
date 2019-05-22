@@ -317,7 +317,7 @@ get_notmapped <- function(dat){
 
   # Output the error tibble
   tibble(row = which(which_notmapped$notmapped_check == FALSE), col = grep("ConcurrentSamplingSite", names(dat)),
-         flag = "ConcurreentSamplingSite is Not Mapped", fill = "red")
+         flag = "ConcurrentSamplingSite is Not Mapped", fill = "red")
 }
 
 # check that SpecimenID matches Animal ID and SpecimentType/Medium
