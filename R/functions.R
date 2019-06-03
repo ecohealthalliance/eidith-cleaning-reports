@@ -54,8 +54,49 @@ collapse_mult <- function(x){
   }
 }
 
+# support function to check special conditions in missing value checks
+check_conditions <- function(dat, col_name, condition_check){
+
+  # evaluate whether special condition applies
+  if(col_name %in% condition_check$col_na){
+
+    # if condition applies, get index of condition in condition_check df
+    which_condition <- which(col_name == condition_check$col_na)
+
+    # for each condition
+    ct <- map_dfc(which_condition, function(j){
+
+      # get data from condition column
+      col_condition <- dat %>% pull(condition_check$col_condition[j]) %>% stri_split_regex(., ";")
+
+      # determine where condition column meets condition
+      map_lgl(col_condition, function(x){
+        cond <- any(tolower(x) %in% tolower(unlist(condition_check$condition[j])))
+
+        # special eval of condition if condition is NA
+        if(all(is.na(unlist(condition_check$condition[j])))){
+          cond <- is.na(x)
+        }
+
+        # take inverse of condition if specified
+        if(condition_check$inverse[j]){
+          cond <- !cond
+        }
+        cond
+      })
+    })
+
+    # get single vector of condition
+    condition <- apply(ct, 1, all)
+  }else{
+    condition <- NULL
+  }
+  condition
+}
+
+
 # create unique values table
-create_unique_table <- function(dat, module, metanames, cols_to_ignore = c(), do_not_count_empty =c()){
+create_unique_table <- function(dat, metanames, condition_check, cols_to_ignore = c(), do_not_count_empty =c()){
 
   # check if null
   if(is.null(dat)){
@@ -67,11 +108,6 @@ create_unique_table <- function(dat, module, metanames, cols_to_ignore = c(), do
 
   # specified columns not to summarize count empty
   cols_not_empty_regex <- stri_join(do_not_count_empty, collapse = "|")
-
-  # load special rules for counting empties in col_na only if col_condition meets condition
-  condition_check <- read_csv(h("condition_check_v2.csv")) %>%
-    filter(module_with_na == module) %>%
-    mutate(condition = stri_split_regex(condition, ", "))
 
   # for each column in dataframe
   out <-map_df(seq_along(dat), function(i){
@@ -86,34 +122,11 @@ create_unique_table <- function(dat, module, metanames, cols_to_ignore = c(), do
     col_dat <- dat %>% pull(i)
     col_name <- names(dat)[i]
 
-    # evaluate whether special condition applies
-    if(col_name %in% condition_check$col_na){
+    # check special conditions
+    condition <-  check_conditions(dat, col_name, condition_check)
 
-      # if condition applies, get index of condition in condition_check df
-      which_condition <- which(col_name == condition_check$col_na)
-
-      # for each condition
-      ct <- map_dfc(which_condition, function(j){
-
-        # get data from condition column
-        col_condition <- dat %>% pull(condition_check$col_condition[j]) %>% stri_split_regex(., ";")
-
-        # determine where condition column meets condition
-        map_lgl(col_condition, function(x){
-          cond <- any(x %in% unlist(condition_check$condition[j]))
-
-          # take inverse of condition if specified
-          if(condition_check$inverse[j]){
-            cond <- !cond
-          }
-          cond
-        })
-      })
-
-      # get single vector of condition
-      condition <- apply(ct, 1, all)
-
-      # subset column data for where condition is TRUE
+    # subset column data for where condition is TRUE
+    if(!is.null(condition)){
       col_dat <- col_dat[condition]
     }
 
@@ -123,8 +136,9 @@ create_unique_table <- function(dat, module, metanames, cols_to_ignore = c(), do
     tibble(field = col_name,
            values = collapse_mult(col_dat),
            count_empty = ifelse(str_detect(col_name, cols_not_empty_regex),
-                                 "--",
-                                 stri_join(missing_numerator, missing_denomenator, sep = "/")))
+                                "--",
+                                stri_join(missing_numerator, missing_denomenator, sep = "/")))
+
   })
 
   mm.measures <- c("BatEarHeight", "BatTailLength", "BatHindFoodLength",
@@ -164,15 +178,15 @@ create_unique_table <- function(dat, module, metanames, cols_to_ignore = c(), do
 }
 
 # identify empty cells
-get_empty <- function(dat, module, metanames, cols_to_ignore = c()){
+get_empty <- function(dat, metanames, condition_check, cols_to_ignore = c()){
 
   # specified columns to ignore (regex matching)
   cols_to_ignore_regex <- stri_join(cols_to_ignore, collapse = "|")
 
   # load special rules for counting empties in col_na only if col_condition meets condition
-  condition_check <- read_csv(h("condition_check_v2.csv")) %>%
-    filter(module_with_na == module) %>%
-    mutate(condition = stri_split_regex(condition, ", "))
+  # condition_check <- read_csv(h("condition_check_v2.csv")) %>%
+  #   filter(module_with_na == module) %>%
+  #   mutate(condition = stri_split_regex(condition, ", "))
 
   which_na <- map_df(seq_along(dat), function(i){
 
@@ -187,34 +201,11 @@ get_empty <- function(dat, module, metanames, cols_to_ignore = c()){
     col_name <- names(dat)[i]
     row_id <-  which(is.na(col_dat))
 
-    # evaluate whether special condition applies
-    if(col_name %in% condition_check$col_na){
+    # check special conditions
+    condition <-  check_conditions(dat, col_name, condition_check)
 
-      # if condition applies, get index of condition in condition_check df
-      which_condition <- which(col_name == condition_check$col_na)
-
-      # for each condition
-      ct <- map_dfc(which_condition, function(j){
-
-        # get data from condition column
-        col_condition <- dat %>% pull(condition_check$col_condition[j]) %>% stri_split_regex(., ";")
-
-        # determine where condition column meets condition
-        map_lgl(col_condition, function(x){
-          cond <- any(x %in% unlist(condition_check$condition[j]))
-
-          # take inverse of condition if specified
-          if(condition_check$inverse[j]){
-            cond <- !cond
-          }
-          cond
-        })
-      })
-
-      # get single vector of condition
-      condition <- apply(ct, 1, all)
-
-      # get row ids of NA and condition
+    # get row ids of NA and condition
+    if(!is.null(condition)){
       row_id <- which(is.na(col_dat) & condition)
     }
 
@@ -239,7 +230,7 @@ get_solo_char <- function(dat, by_SiteName = TRUE) {
     # if these criteria are met...
     if(class(col_dat)[1] == "character" &
        !all(is.na(col_dat)) &
-       !grepl("Notes|Comment|SiteName|ID|EventName|^Class$|^Order$|^Family$|^Genus$|Species|Q37 TravelledCity|Q37 Latitude|Q37 Longitude", col_name, ignore.case = FALSE)) {
+       !grepl("Notes|TestName|Comment|SiteName|ID|EventName|^Class$|^Order$|^Family$|^Genus$|Species|Q37 TravelledCity|Q37 Latitude|Q37 Longitude", col_name, ignore.case = FALSE)) {
 
       # summarize count by unique character string
       cols <- c("SiteName", col_name)
