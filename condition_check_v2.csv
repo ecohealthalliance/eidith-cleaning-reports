@@ -145,15 +145,14 @@ WildlifeRestaurant,Q14 DisinfectantsUsedFor,Q13 UseDisinfectantToClean,WildlifeR
 WildlifeRestaurant,Q16 DesignatedAreaForRubbishUsed,Q15 DesignatedAreaRubbish,WildlifeRestaurant,yes,FALSE
 WildlifeRestaurant,Q18 WhichAnimalsRaidFood,Q17 AnimalsRaidFood,WildlifeRestaurant,yes,FALSE
 WildlifeRestaurant,Q19 RaidingPrevention,Q17 AnimalsRaidFood,WildlifeRestaurant,yes,FALSE
-Test, IsOutbreakTesting1, IsOutbreakTesting, yes, FALSE
-Test, MethodologyReference, IsOutbreakTesting, yes, FALSE
-Test, RealTime_PositiveControlValue1, TestType, Real time PCR, FALSE
-Test, RealTime_PositiveControlValue2, TestType, Real time PCR, FALSE
-Test, RealTime_InternalControlValue, TestType, Real time PCR, FALSE
-Test, RealTime_CTValue, TestType, Real time PCR, FALSE
-Test, LabName_Confirmation, ConfirmationTestType, none, TRUE
-Test, ConfirmationTestDate, ConfirmationTestType, none, TRUE
-Test, Sequence, ConfirmationResult & ConfirmationTestType, Positive & Sequencing, FALSE
-Test, Sequence, TestType & ConfirmationResult & ConfirmationTestType, Conventional PCR & Positive & Sequencing, FALSE
-Test, Virus, TestStatus, Interpretation completed, FALSE
-
+Test,MethodologyReference, IsOutbreakTesting,Test,yes, FALSE
+Test,RealTime_PositiveControlValue1, TestType,Test,Real time PCR, FALSE
+Test,RealTime_PositiveControlValue2, TestType,Test,Real time PCR, FALSE
+Test,RealTime_InternalControlValue, TestType,Test,Real time PCR, FALSE
+Test,RealTime_CTValue, TestType,Test,Real time PCR, FALSE
+Test,LabName_Confirmation, ConfirmationTestType,Test,none, TRUE
+Test,ConfirmationTestDate, ConfirmationTestType,Test,none, TRUE
+Test,Sequence,ConfirmationResult,Test,Positive, FALSE
+Test,Sequence,TestType,Test,Conventional PCR, FALSE
+Test,Sequence,ConfirmationTestType,Test,"Direct Sequencing, Cloning and Sequencing", FALSE
+Test,Virus,Sequence,Test,NA,TRUE
