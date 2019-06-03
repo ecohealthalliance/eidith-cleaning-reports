@@ -1,4 +1,6 @@
 event_specs <- cols(
+  Project = col_character(),
+  GAINS4_EventID = col_integer(),
   Country = col_character(),
   SiteName = col_character(),
   ConcurrentSamplingSite = col_character(),
@@ -34,6 +36,7 @@ event_specs <- cols(
   CattlePresent = col_character(),
   DogsPresent = col_character(),
   CatsPresent = col_character(),
+  HorsesPresent = col_character(),
   drinkingWaterShared = col_character(),
   bathingWaterShared = col_character(),
   ToiletsAvailable = col_character(),
@@ -45,20 +48,18 @@ event_specs <- cols(
   CommunityEngagementDate = col_date(format = ""),
   CommunityEngagementNotes = col_character(),
   NbrBeds = col_integer(),
-  IsDeepForest = col_character(),
-  Notes = col_character()
+  IsDeepForest = col_character()
 )
 
 animal_specs <- cols(
+  Project = col_character(),
+  GAINS4_SampleUnitID = col_integer(),
+  GAINS4_EventID = col_integer(),
   Country = col_character(),
   SiteName = col_character(),
   ConcurrentSamplingSite = col_character(),
   District = col_character(),
   StateProv = col_character(),
-  SiteLatitudeUnrounded = col_double(),
-  SiteLongitudeUnrounded = col_double(),
-  EventLatitudeUnrounded = col_double(),
-  EventLongitudeUnrounded = col_double(),
   EventDate = col_date(format = ""),
   Season = col_character(),
   DurationDays = col_integer(),
@@ -74,6 +75,9 @@ animal_specs <- cols(
   IDCertainty = col_character(),
   SpeciesScientificNameFieldMorphology = col_character(),
   SpeciesEnglishNameFieldMorphology = col_character(),
+  SpeciesScientificNameMSW = col_character(),
+  SpeciesScientificNameITIS = col_character(),
+  SpeciesScientificNameIUCN = col_character(),
   Class = col_character(),
   Order = col_character(),
   Family = col_character(),
@@ -120,15 +124,14 @@ animal_specs <- cols(
 )
 
 specimen_specs <- cols(
+  Project = col_character(),
+  GAINS4_SampleUnitID = col_integer(),
+  GAINS4_SpecimenID = col_integer(),
   Country = col_character(),
   SiteName = col_character(),
   ConcurrentSamplingSite = col_character(),
   District = col_character(),
   StateProv = col_character(),
-  SiteLatitudeUnrounded = col_double(),
-  SiteLongitudeUnrounded = col_double(),
-  EventLatitudeUnrounded = col_double(),
-  EventLongitudeUnrounded = col_double(),
   EventDate = col_date(format = ""),
   Season = col_character(),
   DurationDays = col_integer(),
@@ -154,6 +157,8 @@ specimen_specs <- cols(
 )
 
 human_specs <- cols(
+  GAINS4_SampleUnitID = col_integer(),
+  GAINS4_EventID = col_integer(),
   Country = col_character(),
   SiteName = col_character(),
   ConcurrentSamplingSite = col_character(),
