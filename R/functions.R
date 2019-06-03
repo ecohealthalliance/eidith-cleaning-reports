@@ -431,7 +431,7 @@ get_highlighted_wb <- function(dfs, tab.names, markup.dfs) {
 
   sapply(seq_along(dfs), function(x) addWorksheet(wb, sheetName = tab.names[x]))
 
-  sapply(seq_along(dfs), function(x) writeDataTable(wb, sheet = tab.names[x], x = dfs[[x]]))
+  sapply(seq_along(dfs), function(x) writeData(wb, sheet = tab.names[x], x = dfs[[x]]))
 
   # Generate a style list containing style information for each worksheet
 
